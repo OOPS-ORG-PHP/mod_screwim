@@ -135,8 +135,7 @@ char * zencode (char * inbuf, ULong inbuf_len, ULong * resultbuf_len) {
 	return zcodecom (0, inbuf, inbuf_len, resultbuf_len);
 }
 
-char * zdecode (char * inbuf, ULong inbuf_len, ULong * resultbuf_len)
-{
+char * zdecode (char * inbuf, ULong inbuf_len, ULong * resultbuf_len) {
 	return zcodecom (1, inbuf, inbuf_len, resultbuf_len);
 }
 
