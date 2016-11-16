@@ -5,7 +5,7 @@ ac*.m4
 autom4te.cache
 configure*
 config.guess
-config.h*
+config.h.*
 config.log
 config.nice
 config.status
