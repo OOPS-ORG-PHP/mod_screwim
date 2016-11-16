@@ -54,7 +54,7 @@ main(int argc, char**argv)
 		newdatap[i] = (char)pm9screw_mycryptkey[(newdatalen - i) % cryptkey_len] ^ (~(newdatap[i]));
 	}
 
-	fp = fopen(argv[1], "w");
+	fp = fopen(argv[1], "wb");
 	if (fp == NULL) {
 		fprintf(stderr, "Can not create crypt file(%s)\n", oldfilename);
 		exit(0);

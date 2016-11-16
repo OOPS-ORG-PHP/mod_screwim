@@ -73,7 +73,7 @@ ZEND_API zend_op_array *pm9screw_compile_file(zend_file_handle *file_handle, int
 		}
 	}
 
-	fp = fopen(file_handle->filename, "r");
+	fp = fopen(file_handle->filename, "rb");
 	if (!fp) {
 		return org_compile_file(file_handle, type);
 	}
