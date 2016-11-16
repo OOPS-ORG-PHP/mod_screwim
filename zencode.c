@@ -3,16 +3,23 @@
 #include <zlib.h>
 #include <string.h>
 
+// for emalloc and erealloc
+#include "php.h"
+
 #define OUTBUFSIZ  100000
 
-z_stream z;
-char outbuf[OUTBUFSIZ];
+typedef uLong ULong; /* 32 bits or more */
+typedef uInt UInt; /* 16 bits or more */
 
-char *zcodecom(int mode, char *inbuf, int inbuf_len, int *resultbuf_len)
+char *zcodecom(int mode, char *inbuf, ULong inbuf_len, ULong *resultbuf_len)
 {
+    z_stream z;
+    char outbuf[OUTBUFSIZ];
+
     int count, status;
     char *resultbuf;
-    int total_count = 0;
+    ULong outbuf_size = OUTBUFSIZ + 1;
+    ULong lastbuf_size = 0;
 
     z.zalloc = Z_NULL;
     z.zfree = Z_NULL;
@@ -28,18 +35,30 @@ char *zcodecom(int mode, char *inbuf, int inbuf_len, int *resultbuf_len)
 
     z.next_out = outbuf;
     z.avail_out = OUTBUFSIZ;
+    z.total_out = 0;
     z.next_in = inbuf;
     z.avail_in = inbuf_len;
 
-    resultbuf = malloc(OUTBUFSIZ);
+    resultbuf = emalloc(OUTBUFSIZ + 1);
 
     while (1) {
+	lastbuf_size = z.total_out;
 	if (mode == 0) {
 		status = deflate(&z, Z_FINISH);
 	} else {
 		status = inflate(&z, Z_NO_FLUSH);
 	}
-        if (status == Z_STREAM_END) break;
+	count = OUTBUFSIZ - z.avail_out;
+
+        if (status == Z_STREAM_END) {
+	    if ( count > 0 ) {
+		if ( outbuf_size <= z.total_out )
+		    resultbuf = erealloc(resultbuf, z.total_out + 1);
+		memcpy(resultbuf + lastbuf_size, outbuf, count);
+	    }
+	    break;
+        }
+
         if (status != Z_OK) {
 	    if (mode == 0) {
 		deflateEnd(&z);
@@ -47,36 +66,42 @@ char *zcodecom(int mode, char *inbuf, int inbuf_len, int *resultbuf_len)
 		inflateEnd(&z);
 	    }
 	    *resultbuf_len = 0;
-	    return(resultbuf);
+	    free (resultbuf);
+	    resultbuf = NULL;
+	    return resultbuf;
 	}
-        if (z.avail_out == 0) {
-	    resultbuf = realloc(resultbuf, total_count + OUTBUFSIZ);
-	    memcpy(resultbuf + total_count, outbuf, OUTBUFSIZ);
-	    total_count += OUTBUFSIZ;
-            z.next_out = outbuf;
-            z.avail_out = OUTBUFSIZ;
+
+        if ( z.avail_out < OUTBUFSIZ ) {
+	    if ( outbuf_size <= z.total_out ) {
+		resultbuf = erealloc(resultbuf, z.total_out + OUTBUFSIZ + 1);
+		outbuf_size = z.total_out + OUTBUFSIZ + 1;
+		//printf ("realloc %d bytes!!\n", outbuf_size + 1);
+	    }
+	    memcpy(resultbuf+lastbuf_size, outbuf, count);
+	    memset (outbuf, 0, OUTBUFSIZ);
+	    z.next_out = outbuf;
+	    z.avail_out = OUTBUFSIZ;
         }
     }
-    if ((count = OUTBUFSIZ - z.avail_out) != 0) {
-	resultbuf = realloc(resultbuf, total_count + OUTBUFSIZ);
-	memcpy(resultbuf + total_count, outbuf, count);
-	total_count += count;
-    }
+
     if (mode == 0) {
 	deflateEnd(&z);
     } else {
 	inflateEnd(&z);
     }
-    *resultbuf_len = total_count;
-    return(resultbuf);
+
+    *resultbuf_len = z.total_out;
+    resultbuf[z.total_out] = 0;
+
+    return resultbuf;
 }
 
-char *zencode(char *inbuf, int inbuf_len, int *resultbuf_len)
+char *zencode(char *inbuf, ULong inbuf_len, ULong *resultbuf_len)
 {
 	return zcodecom(0, inbuf, inbuf_len, resultbuf_len);
 }
 
-char *zdecode(char *inbuf, int inbuf_len, int *resultbuf_len)
+char *zdecode(char *inbuf, ULong inbuf_len, ULong *resultbuf_len)
 {
 	return zcodecom(1, inbuf, inbuf_len, resultbuf_len);
 }

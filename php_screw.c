@@ -15,6 +15,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+
+typedef unsigned long  ULong; /* 32 bits or more */
+
 #include "php_screw.h"
 #include "my_screw.h"
 
@@ -22,11 +25,26 @@ PHP_MINIT_FUNCTION(php_screw);
 PHP_MSHUTDOWN_FUNCTION(php_screw);
 PHP_MINFO_FUNCTION(php_screw);
 
-FILE *pm9screw_ext_fopen(FILE *fp)
+typedef struct screw_data {
+	char * buf;
+	size_t len;
+} SCREWData;
+
+SCREWData screwdata_init (void) {
+	SCREWData data;
+
+	data.buf = NULL;
+	data.len = 0;
+
+	return data;
+}
+
+SCREWData pm9screw_ext_fopen(FILE *fp)
 {
 	struct	stat	stat_buf;
-	char	*datap, *newdatap;
-	int	datalen, newdatalen;
+	SCREWData sdata;
+	char	*datap = NULL;
+	ULong datalen;
 	int	cryptkey_len = sizeof pm9screw_mycryptkey / 2;
 	int	i;
 
@@ -41,16 +59,11 @@ FILE *pm9screw_ext_fopen(FILE *fp)
 		datap[i] = (char)pm9screw_mycryptkey[(datalen - i) % cryptkey_len] ^ (~(datap[i]));
 	}
 
-	newdatap = zdecode(datap, datalen, &newdatalen);
-
-	fp = tmpfile();
-	fwrite(newdatap, newdatalen, 1, fp);
+	sdata = screwdata_init ();
+	sdata.buf = zdecode(datap, datalen, &sdata.len);
 
 	free(datap);
-	free(newdatap);
-
-	rewind(fp);
-	return fp;
+	return sdata;
 }
 
 ZEND_API zend_op_array *(*org_compile_file)(zend_file_handle *file_handle, int type TSRMLS_DC);
@@ -58,10 +71,10 @@ ZEND_API zend_op_array *(*org_compile_file)(zend_file_handle *file_handle, int t
 ZEND_API zend_op_array *pm9screw_compile_file(zend_file_handle *file_handle, int type TSRMLS_DC)
 {
 	FILE	*fp;
-	char	buf[PM9SCREW_LEN + 1];
-	char	fname[32];
+	char	buf[PM9SCREW_LEN + 1] = { 0, };
+	char	fname[32] = { 0, };
+	SCREWData sdata, tmp;
 
-	memset(fname, 0, sizeof fname);
 	if (zend_is_executing(TSRMLS_C)) {
 		if (get_active_function_name(TSRMLS_C)) {
 			strncpy(fname, get_active_function_name(TSRMLS_C), sizeof fname - 2);
@@ -85,13 +98,18 @@ ZEND_API zend_op_array *pm9screw_compile_file(zend_file_handle *file_handle, int
 		return org_compile_file(file_handle, type);
 	}
 
-	if (file_handle->type == ZEND_HANDLE_FP) fclose(file_handle->handle.fp);
-	if (file_handle->type == ZEND_HANDLE_FD) close(file_handle->handle.fd);
-	file_handle->handle.fp = pm9screw_ext_fopen(fp);
-	file_handle->type = ZEND_HANDLE_FP;
-	file_handle->opened_path = expand_filepath(file_handle->filename, NULL TSRMLS_CC);
+	sdata = pm9screw_ext_fopen(fp);
+	tmp = screwdata_init ();
 
-	return org_compile_file(file_handle, type);
+	if ( zend_stream_fixup(file_handle, &tmp.buf, &tmp.len TSRMLS_CC) == FAILURE ) {
+		return NULL;
+	}
+
+	file_handle->handle.stream.mmap.buf = sdata.buf;
+	file_handle->handle.stream.mmap.len = sdata.len;
+	file_handle->handle.stream.closer = NULL;
+
+	return org_compile_file(file_handle, type TSRMLS_CC);
 }
 
 zend_module_entry php_screw_module_entry = {
@@ -122,7 +140,7 @@ PHP_MINFO_FUNCTION(php_screw)
 
 PHP_MINIT_FUNCTION(php_screw)
 {
-	CG(extended_info) = 1;
+	CG(compiler_options) |= ZEND_COMPILE_EXTENDED_INFO;
 
 	org_compile_file = zend_compile_file;
 	zend_compile_file = pm9screw_compile_file;
@@ -131,7 +149,8 @@ PHP_MINIT_FUNCTION(php_screw)
 
 PHP_MSHUTDOWN_FUNCTION(php_screw)
 {
-	CG(extended_info) = 1;
+	CG(compiler_options) |= ZEND_COMPILE_EXTENDED_INFO;
+
 	zend_compile_file = org_compile_file;
 	return SUCCESS;
 }
