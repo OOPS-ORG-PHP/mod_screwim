@@ -164,7 +164,10 @@ ZEND_GET_MODULE (screwim);
 PHP_MINFO_FUNCTION (screwim)
 {
 	php_info_print_table_start ();
-	php_info_print_table_header (2, "PHP SCREW Imporved support", "enabled");
+	php_info_print_table_colspan_header (2, "PHP SCREW Imporved support");
+	php_info_print_table_row (2, "Summary", "PHP script encryption tool");
+	php_info_print_table_row (2, "URL", "http://github.com/OOPS-ORG-PHP/mod_screwim");
+	php_info_print_table_row (2, "Build version", SCREWIM_VERSION);
 	php_info_print_table_end ();
 }
 
