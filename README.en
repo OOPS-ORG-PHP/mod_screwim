@@ -81,7 +81,7 @@
 
        OPTIONAL: Encrypted scripts get a stamp added to the beginning of the
 		 file. If you like, you may change this stamp defined by
-		 SCREWIM and SCREWIM_LEN in php_screw.h. SCREWIM_LEN must
+		 SCREWIM and SCREWIM_LEN in php_screwim.h. SCREWIM_LEN must
 		 be less than or equal to the size of SCREWIM.
 
  (4) Compile the decryptor
