@@ -1,6 +1,11 @@
+#ifndef MY_SCREW_H
+#define MY_SCREW_H
+
 short screwim_mycryptkey[] = {
 	11152, 368, 192, 1281, 62
 };
+
+#endif
 
 /*
  * Local variables:
