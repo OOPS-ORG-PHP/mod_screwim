@@ -125,11 +125,9 @@
 
         screwim "Path to the PHP script to be encrypted"
 
-     The above line creates the script file enciphered by the same name.
-     Moreover, a backup is created in the same directory by the name of script
+     The above line creates the script file enciphered by the name of script
      file name .screw.
-     WARNING: When you perform packaging, do NOT forget remove the .screw file.
-                             
+
  (2) Executing a PHP script.
      If the installation of screwim.so went OK, encrypted PHP scripts can now
      be copied to an appropriate directory and executed as if it was

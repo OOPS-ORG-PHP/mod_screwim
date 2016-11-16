@@ -49,7 +49,7 @@ main (int argc, char ** argv) {
 	char   * datap, * newdatap;
 	ULong    datalen, newdatalen;
 	int      cryptkey_len = sizeof screwim_mycryptkey / 2;
-	char     oldfilename[256];
+	char     newfilename[256];
 	int      i;
 
 	if ( argc != 2 ) {
@@ -68,20 +68,12 @@ main (int argc, char ** argv) {
 	fread (datap, datalen, 1, fp);
 	fclose (fp);
 
-	sprintf (oldfilename, "%s.screw", argv[1]);
+	sprintf (newfilename, "%s.screw", argv[1]);
 
 	if ( memcmp (datap, SCREWIM, SCREWIM_LEN) == 0 ) {
 		fprintf (stderr, "Already Crypted(%s)\n", argv[1]);
 		exit (0);
 	}
-
-	fp = fopen (oldfilename, "w");
-	if (fp == NULL) {
-		fprintf (stderr, "Can not create backup file(%s)\n", oldfilename);
-		exit (1);
-	}
-	fwrite (datap, datalen, 1, fp);
-	fclose (fp);
 
 	newdatap = zencode (datap, datalen, &newdatalen);
 
@@ -89,15 +81,15 @@ main (int argc, char ** argv) {
 		newdatap[i] = (char) screwim_mycryptkey[(newdatalen - i) % cryptkey_len] ^ (~(newdatap[i]));
 	}
 
-	fp = fopen (argv[1], "wb");
+	fp = fopen (newfilename, "wb");
 	if ( fp == NULL ) {
-		fprintf (stderr, "Can not create crypt file(%s)\n", oldfilename);
+		fprintf (stderr, "Can not create crypt file(%s)\n", argv[1]);
 		exit(1);
 	}
 	fwrite (SCREWIM, SCREWIM_LEN, 1, fp);
 	fwrite (newdatap, newdatalen, 1, fp);
 	fclose (fp);
-	fprintf (stderr, "Success Crypting(%s)\n", argv[1]);
+	fprintf (stderr, "Success Crypting(%s)\n", newfilename);
 	free (newdatap);
 	free (datap);
 }
