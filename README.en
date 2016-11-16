@@ -19,6 +19,8 @@
 
  * improved memory reallocation logic.
 
+ * maybe thread safe
+
 
 2. Outline.
 
