@@ -27,3 +27,5 @@ Makefile.g*
 Makefile.f*
 Makefile.o*
 tools/screw
+tools/test*
+tags
