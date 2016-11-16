@@ -7,7 +7,7 @@
 
 typedef unsigned long  ULong; /* 32 bits or more */
 
-#include "../php_screw.h"
+#include "../php_screwim.h"
 #include "../my_screw.h"
 
 main(int argc, char**argv)

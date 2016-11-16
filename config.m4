@@ -8,5 +8,5 @@ dnl Otherwise use enable:
 
 if test "$PHP_scwreim" != "no"; then
   dnl Action..
-  PHP_NEW_EXTENSION(screwim, php_screw.c zencode.c, $ext_shared)
+  PHP_NEW_EXTENSION(screwim, php_screwim.c zencode.c, $ext_shared)
 fi
