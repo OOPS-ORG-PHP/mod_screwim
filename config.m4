@@ -8,11 +8,7 @@ dnl Make sure that the comment is aligned:
 
 dnl Otherwise use enable:
 
-PHP_ARG_ENABLE(php_screw, whether to enable php_screw support,
-dnl Make sure that the comment is aligned:
-[  --enable-php_screw           Enable php_screw support])
-
 if test "$PHP_php_screw" != "no"; then
   dnl Action..
-  PHP_EXTENSION(php_screw, $ext_shared)
+  PHP_NEW_EXTENSION(php_screw, php_screw.c zencode.c, $ext_shared)
 fi
