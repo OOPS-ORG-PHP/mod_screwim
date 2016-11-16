@@ -154,7 +154,7 @@ zend_module_entry screwim_module_entry = {
 	NULL,
 	PHP_MINFO(screwim),
 #if ZEND_MODULE_API_NO >= 20010901
-	"1.5.0", /* Replace with version number for your extension */
+	SCREWIM_VERSION, /* Replace with version number for your extension */
 #endif
 	STANDARD_MODULE_PROPERTIES
 };
