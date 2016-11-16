@@ -1,6 +1,6 @@
 /*
- * php_screw
- * (C) 2007, Kunimasa Noda/PM9.com, Inc. <http://www.pm9.com,  kuni@pm9.com>
+ * mod_screwim
+ * (C) 2016, JoungKyun.Kim <http://oops.org>
  * see file LICENSE for license details
  */
 
@@ -21,9 +21,9 @@ typedef unsigned long  ULong; /* 32 bits or more */
 #include "php_screw.h"
 #include "my_screw.h"
 
-PHP_MINIT_FUNCTION(php_screw);
-PHP_MSHUTDOWN_FUNCTION(php_screw);
-PHP_MINFO_FUNCTION(php_screw);
+PHP_MINIT_FUNCTION(screwim);
+PHP_MSHUTDOWN_FUNCTION(screwim);
+PHP_MINFO_FUNCTION(screwim);
 
 typedef struct screw_data {
 	char * buf;
@@ -39,24 +39,24 @@ SCREWData screwdata_init (void) {
 	return data;
 }
 
-SCREWData pm9screw_ext_fopen(FILE *fp)
+SCREWData screwim_ext_fopen(FILE *fp)
 {
 	struct	stat	stat_buf;
 	SCREWData sdata;
 	char	*datap = NULL;
 	ULong datalen;
-	int	cryptkey_len = sizeof pm9screw_mycryptkey / 2;
+	int	cryptkey_len = sizeof screwim_mycryptkey / 2;
 	int	i;
 
 	fstat(fileno(fp), &stat_buf);
-	datalen = stat_buf.st_size - PM9SCREW_LEN;
+	datalen = stat_buf.st_size - SCREWIM_LEN;
 	datap = (char*)malloc(datalen);
 	memset (datap, 0, datalen);
 	fread(datap, datalen, 1, fp);
 	fclose(fp);
 
 	for(i=0; i<datalen; i++) {
-		datap[i] = (char)pm9screw_mycryptkey[(datalen - i) % cryptkey_len] ^ (~(datap[i]));
+		datap[i] = (char)screwim_mycryptkey[(datalen - i) % cryptkey_len] ^ (~(datap[i]));
 	}
 
 	sdata = screwdata_init ();
@@ -68,10 +68,10 @@ SCREWData pm9screw_ext_fopen(FILE *fp)
 
 ZEND_API zend_op_array *(*org_compile_file)(zend_file_handle *file_handle, int type TSRMLS_DC);
 
-ZEND_API zend_op_array *pm9screw_compile_file(zend_file_handle *file_handle, int type TSRMLS_DC)
+ZEND_API zend_op_array *screwim_compile_file(zend_file_handle *file_handle, int type TSRMLS_DC)
 {
 	FILE	*fp;
-	char	buf[PM9SCREW_LEN + 1] = { 0, };
+	char	buf[SCREWIM_LEN + 1] = { 0, };
 	char	fname[32] = { 0, };
 	SCREWData sdata, tmp;
 
@@ -92,13 +92,13 @@ ZEND_API zend_op_array *pm9screw_compile_file(zend_file_handle *file_handle, int
 		return org_compile_file(file_handle, type);
 	}
 
-	fread(buf, PM9SCREW_LEN, 1, fp);
-	if (memcmp(buf, PM9SCREW, PM9SCREW_LEN) != 0) {
+	fread(buf, SCREWIM_LEN, 1, fp);
+	if (memcmp(buf, SCREWIM, SCREWIM_LEN) != 0) {
 		fclose(fp);
 		return org_compile_file(file_handle, type);
 	}
 
-	sdata = pm9screw_ext_fopen(fp);
+	sdata = screwim_ext_fopen(fp);
 	tmp = screwdata_init ();
 
 	if ( zend_stream_fixup(file_handle, &tmp.buf, &tmp.len TSRMLS_CC) == FAILURE ) {
@@ -112,42 +112,42 @@ ZEND_API zend_op_array *pm9screw_compile_file(zend_file_handle *file_handle, int
 	return org_compile_file(file_handle, type TSRMLS_CC);
 }
 
-zend_module_entry php_screw_module_entry = {
+zend_module_entry screwim_module_entry = {
 #if ZEND_MODULE_API_NO >= 20010901
 	STANDARD_MODULE_HEADER,
 #endif
-	"php_screw",
+	"screwim",
 	NULL,
-	PHP_MINIT(php_screw),
-	PHP_MSHUTDOWN(php_screw),
+	PHP_MINIT(screwim),
+	PHP_MSHUTDOWN(screwim),
 	NULL,
 	NULL,
-	PHP_MINFO(php_screw),
+	PHP_MINFO(screwim),
 #if ZEND_MODULE_API_NO >= 20010901
 	"1.5.0", /* Replace with version number for your extension */
 #endif
 	STANDARD_MODULE_PROPERTIES
 };
 
-ZEND_GET_MODULE(php_screw);
+ZEND_GET_MODULE(screwim);
 
-PHP_MINFO_FUNCTION(php_screw)
+PHP_MINFO_FUNCTION(screwim)
 {
 	php_info_print_table_start();
-	php_info_print_table_header(2, "php_screw support", "enabled");
+	php_info_print_table_header(2, "PHP SCREW Imporved support", "enabled");
 	php_info_print_table_end();
 }
 
-PHP_MINIT_FUNCTION(php_screw)
+PHP_MINIT_FUNCTION(screwim)
 {
 	CG(compiler_options) |= ZEND_COMPILE_EXTENDED_INFO;
 
 	org_compile_file = zend_compile_file;
-	zend_compile_file = pm9screw_compile_file;
+	zend_compile_file = screwim_compile_file;
 	return SUCCESS;
 }
 
-PHP_MSHUTDOWN_FUNCTION(php_screw)
+PHP_MSHUTDOWN_FUNCTION(screwim)
 {
 	CG(compiler_options) |= ZEND_COMPILE_EXTENDED_INFO;
 

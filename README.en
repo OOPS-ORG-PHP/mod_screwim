@@ -1,19 +1,32 @@
-                    [ PHP Screw - User's Manual ver1.5 ]
+                    [ PHP Screw Improved - User's Manual ]
 
-1. What's SCREW?
+1. What's PHP SCREW Imporved (ScrewIm)?
 
- PHP Screw is a PHP script encryption tool. When you are developing a
+ PHP Screw Imporved is a PHP script encryption tool. When you are developing a
  commercial package using PHP, the script can be distributed as encrypted up
  until just before execution. This preserves your intellectual property.
+
+ This extension is forked from PHP screw who made by Kunimasa Noda in
+ PM9.com, Inc. and, his information is follows:
+   http://www.pm9.com
+   kuni@pm9.com
+   https://sourceforge.net/projects/php-screw/
+
+2. Different original PHP SCREW
+
+ * change the method of decryption processing from creating temp file to
+   memstream api.
+
+ * improved memory reallocation logic.
 
 
 2. Outline.
 
- The outline of PHP Screw is as follows.
+ The outline of ScrewIm is as follows.
 
- a. Encipher a PHP script with the encryption tool (screw).
+ a. Encipher a PHP script with the encryption tool (screwim).
 
- b. At the time of execution of a PHP script, the decryptor php_screw.so is
+ b. At the time of execution of a PHP script, the decryptor screwim.so is
     executed as PHP-Extension, just before the PHP script is handed to the
     Zend-Compiler.
 
@@ -23,8 +36,8 @@
      Moreover it is possible for you to intermingle an enciphered script file
      and an unenciphered one.
 
-   * The encryption logic in the encryption tool (screw) and the decryption
-     logic in the decryptor (php_screw), can be cutomized easily.
+   * The encryption logic in the encryption tool (screwim) and the decryption
+     logic in the decryptor (ScrewIm), can be cutomized easily.
 
    * The normal purpose code and decryption logic included, can be customized
      by only changing the encryption SEED key.
@@ -34,10 +47,10 @@
 
 3. Requirement
 
- (1) PHP5.x
+ (1) PHP 5.x and after (Also support PHP 7)
      NOTICE: PHP must be compiled with the "--with-zlib" option.
      Check that PHP has zlib compiled in it with the PHP script:
-     "<? gzopen(); ?>"
+     "<?php gzopen(); ?>"
      If PHP knows about the function you can happily proceed.
 
  (2) UNIX like OS (LINUX, FreeBSD, etc. are included) 
@@ -45,9 +58,9 @@
 
 4. Installation.
 
- (1) Unpack php_screw-1.5.tgz.
+ (1) Unpack mod_screwim-{VERSION}.tar.gz.
 
- (2) Execute the following command with directory php_screw-1.5
+ (2) Execute the following command with directory mod_screwim-{VERSION}
 
        phpize
        ./configure
@@ -56,7 +69,7 @@
 
        vi my_screw.h
 
-       -- Please change the encryption SEED key (pm9screw_mycryptkey) into the
+       -- Please change the encryption SEED key (screwim_mycryptkey) into the
           values according to what you like.
           The encryption will be harder to break, if you add more values to the
 	  encryption SEED array. However, the size of the SEED is unrelated to
@@ -68,29 +81,39 @@
 
        OPTIONAL: Encrypted scripts get a stamp added to the beginning of the
 		 file. If you like, you may change this stamp defined by
-		 PM9SCREW and PM9SCREW_LEN in php_screw.h. PM9SCREW_LEN must
-		 be less than or equal to the size of PM9SCREW.
+		 SCREWIM and SCREWIM_LEN in php_screw.h. SCREWIM_LEN must
+		 be less than or equal to the size of SCREWIM.
 
  (4) Compile the decryptor
 
        make
 
- (5) Copy modules/php_screw.so into an extension directory.
+ (5) Copy modules/screwim.so into an extension directory.
 
-       ex) cp modules/php_screw.so /usr/lib/php/modules/php_screw.so
+       ex)
+           make install
+
+           or
+
+           cp modules/screwim.so $(php-config --extension-dir)/
+
+           or
+
+           cp modules/screwim.so $(php -i | grep extension_dir | awk '{print $5}')/
+
 
  (6) Add the next line to php.ini.
 
-       extension=php_screw.so
+       extension=screwim.so
 
- (7) Restart the httpd daemon.
+ (7) Restart the httpd daemon or FPM daemon.
 
  (8) Compile the encryption tool
 
        cd tools
        make
 
- (9) Copy the encryptor ("screw") into an appropriate directory.
+ (9) Copy the encryptor ("screwim") into an appropriate directory.
 
 
 5. User's manual.
@@ -98,7 +121,7 @@
  (1) Encrypting a PHP script:
      Please execute the following command.
 
-        screw "Path to the PHP script to be encrypted"
+        screwim "Path to the PHP script to be encrypted"
 
      The above line creates the script file enciphered by the same name.
      Moreover, a backup is created in the same directory by the name of script
@@ -106,22 +129,13 @@
      WARNING: When you perform packaging, do NOT forget remove the .screw file.
                              
  (2) Executing a PHP script.
-     If the installation of php_screw.so went OK, encrypted PHP scripts can now
+     If the installation of screwim.so went OK, encrypted PHP scripts can now
      be copied to an appropriate directory and executed as if it was
      unencrypted. That is: The encryption is transparent for the
      user.
 
 
-6. History
-
- 2002/04/25 PHP Screw ver1.0
- 2002/05/21 PHP Screw ver1.1 -- Fixed include_path problem.
- 2002/08/02 PHP Screw ver1.2 -- Changed encryption algorithm
- 2004/01/11 PHP Screw ver1.3 -- Changed to BSD License(revised), Correspondence to php-4.3.x
- 2007/10/11 PHP Screw ver1.5 -- Correspondence to PHP5.x
-
-
 7. Copyright
- (C) 2007 Kunimasa Noda/PM9.com, Inc.
- contact:  http://www.pm9.com,  kuni@pm9.com
+ (C) 2016 JoungKyun.Kim, http://oops.org/
+ contact:  https://joungkyun.github.io
 

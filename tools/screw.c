@@ -4,6 +4,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+
+typedef unsigned long  ULong; /* 32 bits or more */
+
 #include "../php_screw.h"
 #include "../my_screw.h"
 
@@ -12,8 +15,8 @@ main(int argc, char**argv)
 	FILE	*fp;
 	struct	stat	stat_buf;
 	char	*datap, *newdatap;
-	int	datalen, newdatalen;
-	int	cryptkey_len = sizeof pm9screw_mycryptkey / 2;
+	ULong datalen, newdatalen;
+	int	cryptkey_len = sizeof screwim_mycryptkey / 2;
 	char	oldfilename[256];
 	int	i;
 
@@ -29,13 +32,13 @@ main(int argc, char**argv)
 
 	fstat(fileno(fp), &stat_buf);
 	datalen = stat_buf.st_size;
-	datap = (char*)malloc(datalen + PM9SCREW_LEN);
+	datap = (char*)malloc(datalen + SCREWIM_LEN);
 	fread(datap, datalen, 1, fp);
 	fclose(fp);
 
 	sprintf(oldfilename, "%s.screw", argv[1]);
 
-	if (memcmp(datap, PM9SCREW, PM9SCREW_LEN) == 0) {
+	if (memcmp(datap, SCREWIM, SCREWIM_LEN) == 0) {
 		fprintf(stderr, "Already Crypted(%s)\n", argv[1]);
 		exit(0);
 	}
@@ -51,7 +54,7 @@ main(int argc, char**argv)
 	newdatap = zencode(datap, datalen, &newdatalen);
 
 	for(i=0; i<newdatalen; i++) {
-		newdatap[i] = (char)pm9screw_mycryptkey[(newdatalen - i) % cryptkey_len] ^ (~(newdatap[i]));
+		newdatap[i] = (char)screwim_mycryptkey[(newdatalen - i) % cryptkey_len] ^ (~(newdatap[i]));
 	}
 
 	fp = fopen(argv[1], "wb");
@@ -59,7 +62,7 @@ main(int argc, char**argv)
 		fprintf(stderr, "Can not create crypt file(%s)\n", oldfilename);
 		exit(0);
 	}
-	fwrite(PM9SCREW, PM9SCREW_LEN, 1, fp);
+	fwrite(SCREWIM, SCREWIM_LEN, 1, fp);
 	fwrite(newdatap, newdatalen, 1, fp);
 	fclose(fp);
 	fprintf(stderr, "Success Crypting(%s)\n", argv[1]);
