@@ -33,6 +33,7 @@ FILE *pm9screw_ext_fopen(FILE *fp)
 	fstat(fileno(fp), &stat_buf);
 	datalen = stat_buf.st_size - PM9SCREW_LEN;
 	datap = (char*)malloc(datalen);
+	memset (datap, 0, datalen);
 	fread(datap, datalen, 1, fp);
 	fclose(fp);
 
