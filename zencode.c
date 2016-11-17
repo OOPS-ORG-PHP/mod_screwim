@@ -135,7 +135,7 @@ char * zcodecom (int mode, char * inbuf, ULong inbuf_len, ULong * resultbuf_len)
 					errmsg = "The state (as represented in stream) is inconsistent, or stream was NULL.";
 					break;
 				default : // Z_NEED_DICT
-					errmsg = "A preset dictionary is required. The adler field shall be set to the Adler-32 checksum of the dictionary chosen by the compressor.";
+					errmsg = "A preset dictionary is required. The adler field shall be set to the Adler-32 checksum of the dictionary chosen by the compressor. In this case, you should suspect that ScrewIm's encode key is not correct.";
 			}
 
 			php_error_docref (NULL, E_COMPILE_ERROR, "ScrewIm %scode error. %s", mode ? "de" : "en", errmsg);
