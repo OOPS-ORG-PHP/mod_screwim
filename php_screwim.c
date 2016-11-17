@@ -50,7 +50,6 @@
 typedef unsigned long  ULong; /* 32 bits or more */
 
 #include "php_screwim.h"
-#include "my_screw.h"
 
 PHP_MINIT_FUNCTION (screwim);
 PHP_MSHUTDOWN_FUNCTION (screwim);
@@ -76,8 +75,11 @@ SCREWData screwim_ext_fopen (FILE * fp)
 	SCREWData   sdata;
 	char      * datap = NULL;
 	ULong       datalen;
-	int         cryptkey_len = sizeof screwim_mycryptkey / 2;
+	int         cryptkey_len;
 	int         i;
+
+	#include "my_screw.h"
+	cryptkey_len = sizeof (screwim_mycryptkey) / 2;
 
 	fstat (fileno (fp), &stat_buf);
 	datalen = stat_buf.st_size - SCREWIM_LEN;
