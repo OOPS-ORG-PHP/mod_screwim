@@ -119,13 +119,13 @@ ZEND_API zend_op_array * screwim_compile_file (zend_file_handle * file_handle, i
 
 	fp = fopen (file_handle->filename, "rb");
 	if ( ! fp ) {
-		return org_compile_file (file_handle, type);
+		return org_compile_file (file_handle, type TSRMLS_CC);
 	}
 
 	fread (buf, SCREWIM_LEN, 1, fp);
 	if ( memcmp (buf, SCREWIM, SCREWIM_LEN) != 0 ) {
 		fclose (fp);
-		return org_compile_file (file_handle, type);
+		return org_compile_file (file_handle, type TSRMLS_CC);
 	}
 
 	sdata = screwim_ext_fopen (fp);
