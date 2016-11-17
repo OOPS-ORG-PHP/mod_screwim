@@ -26,6 +26,6 @@ Makefile
 Makefile.g*
 Makefile.f*
 Makefile.o*
-tools/screw
+tools/screwim
 tools/test*
 tags
