@@ -131,6 +131,9 @@ ZEND_API zend_op_array * screwim_compile_file (zend_file_handle * file_handle, i
 	sdata = screwim_ext_fopen (fp);
 	tmp = screwdata_init ();
 
+	if ( sdata.buf == NULL )
+		return NULL;
+
 	if ( zend_stream_fixup (file_handle, &tmp.buf, &tmp.len TSRMLS_CC) == FAILURE ) {
 		return NULL;
 	}

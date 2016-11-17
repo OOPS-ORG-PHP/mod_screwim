@@ -49,7 +49,7 @@ char * zcodecom (int mode, char * inbuf, ULong inbuf_len, ULong * resultbuf_len)
 	char       outbuf[OUTBUFSIZ];
 
 	int        count, status;
-	char     * resultbuf;
+	char     * resultbuf, * rbuf_new = NULL;
 	ULong      outbuf_size = OUTBUFSIZ + 1;
 	ULong      lastbuf_size = 0;
 
@@ -72,7 +72,14 @@ char * zcodecom (int mode, char * inbuf, ULong inbuf_len, ULong * resultbuf_len)
 	z.next_in   = inbuf;
 	z.avail_in  = inbuf_len;
 
-	resultbuf = emalloc (OUTBUFSIZ + 1);
+	if ( (resultbuf = emalloc (OUTBUFSIZ + 1)) == NULL ) {
+		php_error_docref (
+			NULL, E_COMPILE_ERROR,
+			"ScrewIm %scode error. Memory allocation failed.",
+			mode ? "de" : "en"
+		);
+		return NULL;
+	}
 
 	while ( 1 ) {
 		lastbuf_size = z.total_out;
@@ -85,14 +92,27 @@ char * zcodecom (int mode, char * inbuf, ULong inbuf_len, ULong * resultbuf_len)
 
 		if ( status == Z_STREAM_END ) {
 			if ( count > 0 ) {
-				if ( outbuf_size <= z.total_out )
-					resultbuf = erealloc (resultbuf, z.total_out + 1);
+				if ( outbuf_size <= z.total_out ) {
+					if ( (rbuf_new = erealloc (resultbuf, z.total_out + 1)) != NULL ) {
+						resultbuf = rbuf_new;
+					} else {
+						efree (resultbuf);
+						php_error_docref (
+							NULL, E_COMPILE_ERROR,
+							"ScrewIm %scode error. Memory allocation failed.",
+							mode ? "de" : "en"
+						);
+						return NULL;
+					}
+				}
 				memcpy (resultbuf + lastbuf_size, outbuf, count);
 			}
 			break;
 		}
 
 		if ( status != Z_OK ) {
+			char * errmsg;
+
 			if ( mode == 0 ) {
 				deflateEnd (&z);
 			} else {
@@ -101,17 +121,40 @@ char * zcodecom (int mode, char * inbuf, ULong inbuf_len, ULong * resultbuf_len)
 
 			*resultbuf_len = 0;
 
-			if ( resultbuf != NULL ) {
-				free (resultbuf);
-				resultbuf = NULL;
+			if ( resultbuf != NULL )
+				efree (resultbuf);
+
+			switch (status) {
+				case Z_BUF_ERROR :
+					errmsg = "No progress is possible; either avail_in or avail_out was zero.";
+					break;
+				case Z_MEM_ERROR :
+					errmsg = "Insufficient memory.";
+					break;
+				case Z_STREAM_ERROR :
+					errmsg = "The state (as represented in stream) is inconsistent, or stream was NULL.";
+					break;
+				default : // Z_NEED_DICT
+					errmsg = "A preset dictionary is required. The adler field shall be set to the Adler-32 checksum of the dictionary chosen by the compressor.";
 			}
 
-			return resultbuf;
+			php_error_docref (NULL, E_COMPILE_ERROR, "ScrewIm %scode error. %s", mode ? "de" : "en", errmsg);
+			return NULL;
 		}
 
 		if ( z.avail_out < OUTBUFSIZ ) {
 			if ( outbuf_size <= z.total_out ) {
-				resultbuf = erealloc (resultbuf, z.total_out + OUTBUFSIZ + 1);
+				if ( (rbuf_new = erealloc (resultbuf, z.total_out + OUTBUFSIZ + 1)) != NULL ) {
+					resultbuf = rbuf_new;
+				} else {
+					efree (resultbuf);
+					php_error_docref (
+						NULL, E_COMPILE_ERROR,
+						"ScrewIm %scode error. Memory allocation failed.",
+						mode ? "de" : "en"
+					);
+					return NULL;
+				}
 				outbuf_size = z.total_out + OUTBUFSIZ + 1;
 				//printf ("realloc %d bytes!!\n", outbuf_size + 1);
 			}
