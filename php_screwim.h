@@ -37,6 +37,26 @@
 #define SCREWIM     "\tSCREWIM DATA\t"
 #define SCREWIM_LEN 14
 
+//extern zend_module_entry screwim_module_entry;
+//#define phpext_screwim_ptr &screwim_module_entry
+
+PHP_MINIT_FUNCTION (screwim);
+PHP_MSHUTDOWN_FUNCTION (screwim);
+PHP_MINFO_FUNCTION (screwim);
+
+ZEND_BEGIN_MODULE_GLOBALS(screwim)
+	zend_bool enabled;
+ZEND_END_MODULE_GLOBALS(screwim)
+
+#ifdef ZTS
+# define SCREWIM_G(v) TSRMG(screwim_globals_id, zend_screwim_globals *, v)
+# ifdef COMPILE_DL_SCREWIM
+	ZEND_TSRMLS_CACHE_EXTERN()
+# endif
+#else
+# define SCREWIM_G(v) (screwim_globals.v)
+#endif
+
 char * zdecode (char * inbuf, ULong inbuf_len, ULong * resultbuf_len);
 char * zencode (char * inbuf, ULong inbuf_len, ULong * resultbuf_len);
 

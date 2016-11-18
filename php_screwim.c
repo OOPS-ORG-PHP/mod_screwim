@@ -51,9 +51,12 @@ typedef unsigned long  ULong; /* 32 bits or more */
 
 #include "php_screwim.h"
 
-PHP_MINIT_FUNCTION (screwim);
-PHP_MSHUTDOWN_FUNCTION (screwim);
-PHP_MINFO_FUNCTION (screwim);
+ZEND_DECLARE_MODULE_GLOBALS(screwim)
+
+static void php_screwim_init_globals(zend_screwim_globals *screwim_globals)
+{
+	screwim_globals->enabled = 0;
+}
 
 typedef struct screw_data {
 	char * buf;
@@ -107,6 +110,9 @@ ZEND_API zend_op_array * screwim_compile_file (zend_file_handle * file_handle, i
 	char        buf[SCREWIM_LEN + 1] = { 0, };
 	char        fname[32] = { 0, };
 	SCREWData   sdata, tmp;
+
+	if ( ! SCREWIM_G (enabled) )
+		return org_compile_file (file_handle, type TSRMLS_CC);
 
 	if ( zend_is_executing (TSRMLS_C) ) {
 		if ( get_active_function_name (TSRMLS_C) ) {
@@ -164,7 +170,13 @@ zend_module_entry screwim_module_entry = {
 	STANDARD_MODULE_PROPERTIES
 };
 
+#ifdef COMPILE_DL_SCREWIM
 ZEND_GET_MODULE (screwim);
+#endif
+
+PHP_INI_BEGIN()
+	STD_PHP_INI_BOOLEAN("screwim.enable",  "0", PHP_INI_ALL, OnUpdateBool, enabled, zend_screwim_globals, screwim_globals)
+PHP_INI_END()
 
 PHP_MINFO_FUNCTION (screwim)
 {
@@ -179,6 +191,9 @@ PHP_MINFO_FUNCTION (screwim)
 PHP_MINIT_FUNCTION (screwim)
 {
 	CG(compiler_options) |= ZEND_COMPILE_EXTENDED_INFO;
+
+	ZEND_INIT_MODULE_GLOBALS(screwim, php_screwim_init_globals, NULL);
+	REGISTER_INI_ENTRIES();
 
 	org_compile_file  = zend_compile_file;
 	zend_compile_file = screwim_compile_file;
