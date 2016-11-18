@@ -18,6 +18,10 @@
    memstream api.
 
  * improved memory reallocation logic.
+ 
+ * Only works if 'screwim.enable' option is on.
+   - Improved performance by don't check magic key under normal environment.
+   - see also https://github.com/OOPS-ORG-PHP/mod_screwim/issues/3
 
  * maybe thread safe
 
