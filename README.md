@@ -15,8 +15,9 @@ The differences from the original PHP-screw are as follows:
  3. Only works if 'screwim.enable' option is on.
   * Improved performance by don't check magic key under normal environment(regular php script).
   * See also https://github.com/OOPS-ORG-PHP/mod_screwim/issues/3
-  * Fixed memory leaks.
-  * Maybe thread safe.
+ 4. Fixed memory leaks.
+ 5. Maybe thread safe.
+ 6. And so on..
 
 ## Description
 
