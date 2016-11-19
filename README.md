@@ -12,11 +12,13 @@ This extension is based from PHP screw who made by ***Kunimasa Noda*** in PM9.co
 The differences from the original PHP-screw are as follows:
  1. Improved performance by processing in memory rather than creating temporary files during decoding.
  2. Improved performance by changing memory reallocation logic when encoding or decoding large files.
+ 3. Improved performance by fixing duplicated file open (issue #4)
  3. Only works if 'screwim.enable' option is on.
   * Improved performance by don't check magic key under normal environment(regular php script).
-  * See also https://github.com/OOPS-ORG-PHP/mod_screwim/issues/3
+  * See also [#3 add screwim.enable ini option issue](https://github.com/OOPS-ORG-PHP/mod_screwim/issues/3)
  4. Fixed memory leaks.
  5. Maybe thread safe.
+ 6. Preventing problems that can be decompiled with [php_unscrew](https://github.com/dehydr8/php_unscrew)
  6. And so on..
 
 ## Description
