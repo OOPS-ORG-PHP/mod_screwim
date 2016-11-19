@@ -78,7 +78,7 @@ SCREWData screwim_ext_buf (char * datap, ULong datalen) {
 	int         i;
 
 	#include "my_screw.h"
-	cryptkey_len = sizeof (screwim_mycryptkey) / 2;
+	cryptkey_len = sizeof (screwim_mycryptkey) / sizeof (short);
 
 	for( i=0; i<datalen; i++ ) {
 		datap[i] = (char) screwim_mycryptkey[(datalen - i) % cryptkey_len] ^ (~(datap[i]));
