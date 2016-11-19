@@ -37,6 +37,11 @@
 #define SCREWIM     "\tSCREWIM DATA\t"
 #define SCREWIM_LEN 14
 
+/*
+ * If build PHP module
+ */
+#ifndef NO_PHP_MOD
+
 //extern zend_module_entry screwim_module_entry;
 //#define phpext_screwim_ptr &screwim_module_entry
 
@@ -56,6 +61,8 @@ ZEND_END_MODULE_GLOBALS(screwim)
 #else
 # define SCREWIM_G(v) (screwim_globals.v)
 #endif
+
+#endif // end of build PHP module
 
 char * zdecode (char * inbuf, ULong inbuf_len, ULong * resultbuf_len);
 char * zencode (char * inbuf, ULong inbuf_len, ULong * resultbuf_len);
