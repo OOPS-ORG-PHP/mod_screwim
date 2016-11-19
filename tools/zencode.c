@@ -63,10 +63,10 @@ char * zcodecom (int mode, char * inbuf, ULong inbuf_len, ULong * resultbuf_len)
 		inflateInit (&z);
 	}
 
-	z.next_out  = outbuf;
+	z.next_out  = (unsigned char *) outbuf;
 	z.avail_out = OUTBUFSIZ;
 	z.total_out = 0;
-	z.next_in   = inbuf;
+	z.next_in   = (unsigned char *) inbuf;
 	z.avail_in  = inbuf_len;
 
 	if ( (resultbuf = malloc (OUTBUFSIZ + 1)) == NULL ) {
@@ -145,7 +145,7 @@ char * zcodecom (int mode, char * inbuf, ULong inbuf_len, ULong * resultbuf_len)
 			}
 			memcpy (resultbuf+lastbuf_size, outbuf, count);
 			memset (outbuf, 0, OUTBUFSIZ);
-			z.next_out  = outbuf;
+			z.next_out  = (unsigned char *) outbuf;
 			z.avail_out = OUTBUFSIZ;
 		}
 	}

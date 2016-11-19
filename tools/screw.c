@@ -32,6 +32,7 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <sys/types.h>
@@ -45,7 +46,7 @@ typedef unsigned long  ULong; /* 32 bits or more */
 #include "../php_screwim.h"
 #include "../my_screw.h"
 
-main (int argc, char ** argv) {
+int main (int argc, char ** argv) {
 	FILE   * fp;
 	struct   stat stat_buf;
 	char   * datap, * newdatap;
@@ -56,12 +57,12 @@ main (int argc, char ** argv) {
 
 	if ( argc != 2 ) {
 		fprintf (stderr, "Usage: filename.\n");
-		exit (1);
+		return 1;
 	}
 	fp = fopen (argv[1], "r");
 	if ( fp == NULL ) {
 		fprintf (stderr, "File not found(%s)\n", argv[1]);
-		exit (1);
+		return 1;
 	}
 
 	fstat (fileno (fp), &stat_buf);
@@ -74,7 +75,7 @@ main (int argc, char ** argv) {
 
 	if ( memcmp (datap, SCREWIM, SCREWIM_LEN) == 0 ) {
 		fprintf (stderr, "Already Crypted(%s)\n", argv[1]);
-		exit (0);
+		return 0;
 	}
 
 	newdatap = zencode (datap, datalen, &newdatalen);
@@ -86,7 +87,7 @@ main (int argc, char ** argv) {
 	fp = fopen (newfilename, "wb");
 	if ( fp == NULL ) {
 		fprintf (stderr, "Can not create crypt file(%s)\n", argv[1]);
-		exit(1);
+		return 1;
 	}
 	fwrite (SCREWIM, SCREWIM_LEN, 1, fp);
 	fwrite (newdatap, newdatalen, 1, fp);
@@ -94,6 +95,8 @@ main (int argc, char ** argv) {
 	fprintf (stderr, "Success Crypting(%s)\n", newfilename);
 	free (newdatap);
 	free (datap);
+
+	return 0;
 }
 
 /*
