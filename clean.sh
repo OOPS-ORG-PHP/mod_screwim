@@ -9,4 +9,4 @@ rm -f ltmain.sh missing run-tests.php install* libtool tools/screw .deps
 
 [ -f tools/Makefile ] && make -C tools distclean
 rm -rf tools/build
-rm -f tools/ac* tools/config.h* tools/configure
+rm -f tools/ac* tools/config.h* tools/configure tools/installsh tools/missing

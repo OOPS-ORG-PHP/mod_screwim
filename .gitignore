@@ -30,6 +30,6 @@ Makefile.g*
 Makefile.f*
 Makefile.o*
 tools/screwim
-tools/test
+tools/test*
 tags
 z

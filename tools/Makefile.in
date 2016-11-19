@@ -108,9 +108,7 @@ bin_PROGRAMS = screwim$(EXEEXT)
 subdir = .
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/configure $(am__configure_deps) \
-	$(srcdir)/config.h.in build/install-sh build/missing \
-	$(top_srcdir)/build/install-sh $(top_srcdir)/build/missing \
-	$(top_srcdir)/build/tap-driver.sh
+	$(srcdir)/config.h.in install-sh missing
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -325,7 +323,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 DISTCLEANFILES = 
 #EXTRA_DIST = README.md LICENSE
-SUBDIRS = . tests
+SUBDIRS = .
 AM_CFLAGS = -Wall
 screwim_SOURCES = screw.c zencode.c
 all: config.h
