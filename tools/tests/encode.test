@@ -1,0 +1,24 @@
+#!/bin/bash
+
+SCREWIM="../screwim"
+
+if [ ! -f "${SCREWIM}" ]; then
+	echo 1..1
+	echo "ok screwim binary # SKIP because can not found ${SCREWIM}"
+	exit 0
+fi
+
+echo 1..1 # Number of tests to be executed.
+
+res=$(${SCREWIM} test.php 2> /dev/stdout)
+
+if [ $? -eq 0 ]; then
+	if [ "${res}" = "Success Crypting(test.php.screw)" ]; then
+		echo "ok - ${res}"
+	else
+		echo "not ok - ${res}"
+	fi
+else
+	echo "not ok - encrypt error(${res})"
+fi
+

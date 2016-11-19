@@ -3,7 +3,8 @@
 *.swp
 ac*.m4
 autom4te.cache
-configure*
+configure
+configure.in
 config.guess
 config.h*
 config.log
@@ -19,6 +20,8 @@ run-tests.php
 *.la
 *.lo
 *.so
+*.screw
+*.discrew
 build
 modules
 *~
@@ -27,5 +30,6 @@ Makefile.g*
 Makefile.f*
 Makefile.o*
 tools/screwim
-tools/test*
+tools/test
 tags
+z
