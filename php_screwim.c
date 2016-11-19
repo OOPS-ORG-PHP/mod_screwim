@@ -72,24 +72,13 @@ SCREWData screwdata_init (void) {
 	return data;
 }
 
-SCREWData screwim_ext_fopen (FILE * fp)
-{
-	struct      stat stat_buf;
-	SCREWData   sdata;
-	char      * datap = NULL;
-	ULong       datalen;
+SCREWData screwim_ext_buf (char * datap, ULong datalen) {
 	int         cryptkey_len;
+	SCREWData   sdata;
 	int         i;
 
 	#include "my_screw.h"
 	cryptkey_len = sizeof (screwim_mycryptkey) / 2;
-
-	fstat (fileno (fp), &stat_buf);
-	datalen = stat_buf.st_size - SCREWIM_LEN;
-	datap = (char *) emalloc (datalen);
-	memset (datap, 0, datalen);
-	fread (datap, datalen, 1, fp);
-	fclose (fp);
 
 	for( i=0; i<datalen; i++ ) {
 		datap[i] = (char) screwim_mycryptkey[(datalen - i) % cryptkey_len] ^ (~(datap[i]));
@@ -98,7 +87,45 @@ SCREWData screwim_ext_fopen (FILE * fp)
 	sdata = screwdata_init ();
 	sdata.buf = zdecode (datap, datalen, &sdata.len);
 
+	return sdata;
+}
+
+SCREWData screwim_ext_fopen (FILE * fp)
+{
+	struct      stat stat_buf;
+	SCREWData   sdata;
+	char      * datap = NULL;
+	ULong       datalen;
+
+	fstat (fileno (fp), &stat_buf);
+	datalen = stat_buf.st_size - SCREWIM_LEN;
+	datap = (char *) emalloc (datalen);
+	memset (datap, 0, datalen);
+	fread (datap, datalen, 1, fp);
+	fclose (fp);
+
+	sdata = screwim_ext_buf (datap, datalen);
 	efree (datap);
+
+	return sdata;
+}
+
+SCREWData screwim_ext_mmap (zend_file_handle * file_handle) {
+	SCREWData   sdata;
+	char      * nbuf;
+	char      * datap = NULL;
+	ULong       datalen;
+
+	nbuf = file_handle->handle.stream.mmap.buf + SCREWIM_LEN;
+	datalen = file_handle->handle.stream.mmap.len - SCREWIM_LEN; 
+
+	datap = (char *) emalloc (datalen);
+	memset (datap, 0, datalen);
+	memcpy (datap, nbuf, datalen);
+
+	sdata = screwim_ext_buf (datap, datalen);
+	efree (datap);
+
 	return sdata;
 }
 
@@ -114,6 +141,18 @@ ZEND_API zend_op_array * screwim_compile_file (zend_file_handle * file_handle, i
 	if ( ! SCREWIM_G (enabled) )
 		return org_compile_file (file_handle, type TSRMLS_CC);
 
+	// If file_handle->type is ZEND_HANDLE_MAPPED, handle.stream.mmap.buf has already
+	// contents data. This case is include or require. when file is directly opened,
+	// handle.stream.mmap.buf has NULL.
+	if ( file_handle->type == ZEND_HANDLE_MAPPED ) {
+		if ( file_handle->handle.stream.mmap.len > 0 ) {
+			memcpy (buf, file_handle->handle.stream.mmap.buf, SCREWIM_LEN);
+			if ( memcmp (buf, SCREWIM, SCREWIM_LEN) != 0 )
+				return org_compile_file (file_handle, type TSRMLS_CC);
+		} else
+			return org_compile_file (file_handle, type TSRMLS_CC);
+	}
+
 	if ( zend_is_executing (TSRMLS_C) ) {
 		if ( get_active_function_name (TSRMLS_C) ) {
 			strncpy (fname, get_active_function_name (TSRMLS_C), sizeof (fname - 2));
@@ -125,26 +164,33 @@ ZEND_API zend_op_array * screwim_compile_file (zend_file_handle * file_handle, i
 		}
 	}
 
-	fp = fopen (file_handle->filename, "rb");
-	if ( ! fp ) {
-		return org_compile_file (file_handle, type TSRMLS_CC);
+	if ( file_handle->type == ZEND_HANDLE_MAPPED ) {
+		sdata = screwim_ext_mmap (file_handle);
+	} else {
+		// When file is opened directly (type is ZEND_HANDLE_FP), check here.
+
+		fp = fopen (file_handle->filename, "rb");
+		if ( ! fp ) {
+			return org_compile_file (file_handle, type TSRMLS_CC);
+		}
+
+		fread (buf, SCREWIM_LEN, 1, fp);
+
+		if ( memcmp (buf, SCREWIM, SCREWIM_LEN) != 0 ) {
+			fclose (fp);
+			return org_compile_file (file_handle, type TSRMLS_CC);
+		}
+
+		sdata = screwim_ext_fopen (fp);
 	}
 
-	fread (buf, SCREWIM_LEN, 1, fp);
-	if ( memcmp (buf, SCREWIM, SCREWIM_LEN) != 0 ) {
-		fclose (fp);
-		return org_compile_file (file_handle, type TSRMLS_CC);
-	}
-
-	sdata = screwim_ext_fopen (fp);
 	tmp = screwdata_init ();
 
 	if ( sdata.buf == NULL )
 		return NULL;
 
-	if ( zend_stream_fixup (file_handle, &tmp.buf, &tmp.len TSRMLS_CC) == FAILURE ) {
+	if ( zend_stream_fixup (file_handle, &tmp.buf, &tmp.len TSRMLS_CC) == FAILURE )
 		return NULL;
-	}
 
 	file_handle->handle.stream.mmap.buf = sdata.buf;
 	file_handle->handle.stream.mmap.len = sdata.len;
