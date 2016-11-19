@@ -41,8 +41,6 @@
 
 typedef unsigned long  ULong; /* 32 bits or more */
 
-#define NO_PHP_MOD
-
 #include "../php_screwim.h"
 #include "../my_screw.h"
 

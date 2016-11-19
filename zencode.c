@@ -30,14 +30,26 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <zlib.h>
 #include <string.h>
 
+#ifndef NO_PHP_MOD
 // for emalloc and erealloc
 #include "php.h"
+#else
+#define erealloc realloc
+#define emalloc malloc
+#define efree free
+
+#define php_error_docref(a,b,c,...) \
+	fprintf (stderr, c, __VA_ARGS__); exit (1)
+#endif
 
 #define OUTBUFSIZ  100000
 
