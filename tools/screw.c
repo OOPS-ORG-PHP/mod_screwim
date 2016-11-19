@@ -76,7 +76,7 @@ void usage (void) {
 		"   -d,     --decode   decrypt encrypted php script\n"
 		"   -h,     --help     this help messages\n"
 		"   -H VAL, --hlen=VAL length of magic key(SCREWIM_LEN or PM9SCREW_LEN).\n"
-	    "                      use -d mode\n"
+		"                      use -d mode\n"
 		"   -k VAL, --key=VAL  key bytes. use with -d mode\n"
 		"   -v,     --view     print head length and key byte of this file\n",
 		PACKAGE_STRING, PACKAGE_NAME
