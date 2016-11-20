@@ -4,10 +4,7 @@
 
 ***PHP Screw Imporved(ScrewIm)*** is a PHP script encryption tool. When you are developing a commercial package using PHP, the script can be distributed as encrypted up until just before execution. This preserves your intellectual property.
 
-This extension is based from PHP screw who made by ***Kunimasa Noda*** in PM9.com, Inc. and, his information is follows:
- * Homepage: http://www.pm9.com
- * Email: kuni@pm9.com
- * Project page: http://www.pm9.com/newpm9/itbiz/php/phpscrew/
+This extension is based from [PHP screw](http://www.pm9.com/newpm9/itbiz/php/phpscrew/) who made by [***Kunimasa Noda***](mailto:kuni@pm9.com) in [PM9.com, Inc.](http://www.pm9.com)
 
 The differences from the original PHP-screw are as follows:
  1. Improved performance by processing in memory rather than creating temporary files during decoding.
