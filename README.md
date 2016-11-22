@@ -105,7 +105,7 @@ The follow command creates the script file enciphered by the name of ***script f
 
 ### 3. Decryption
 
-The follow command creates the script file enciphered by the name of ***script file name .disscrew***.
+The follow command creates the script file enciphered by the name of ***script file name .discrew***.
 ```
    [root@host ~]$ /usr/bin/screwim -d test.php.screw
    Success Decrypting(test.php.screw.discrew)

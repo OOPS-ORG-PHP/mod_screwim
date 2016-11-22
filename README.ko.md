@@ -121,7 +121,6 @@ PHP 설정 파일(php.ini등)에 다음 설정을 추가 하십시오. 이 설�
 extension=screwim.so
 ```
 
-By default, decryption does not work, so the performance of regular PHP files is better than the original PHP Screw. The screwim.enable option must be turned on for decryption to work.
 위의 모듈을 등록 하였다고 하여도, 기본적으로는 복호화 로직이 동작하지는 않습니다.
 
 복호화 루틴은 다음의 과정으로 처리를 하게 됩니다.
@@ -158,7 +157,6 @@ CLI 환경에서 설정 파일을 따로 사용할 수 있다면, CLI 환경에�
 
 #### 4.3. PHP Cli 환경
 
-use -d option.
 -d 명령행 옵션을 이용하여 구동할 수 있습니다.
 
 ```bash
