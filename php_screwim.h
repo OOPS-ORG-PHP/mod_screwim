@@ -69,6 +69,19 @@ ZEND_END_MODULE_GLOBALS(screwim)
 char * zdecode (char * inbuf, ULong inbuf_len, ULong * resultbuf_len);
 char * zencode (char * inbuf, ULong inbuf_len, ULong * resultbuf_len);
 
+// for <= PHP 5
+#if PHP_VERSION_ID < 60000
+typedef struct _zend_string {
+	size_t   len;
+	char   * val;
+} zend_string;
+
+#define ZSTR_VAL(zstr) (zstr)->val
+#define ZSTR_LEN(zstr) (zstr)->len
+#define RETURN_STR(str) RETURN_STRINGL(ZSTR_VAL(str),ZSTR_LEN(str),1)
+#define RETVAL_STR(str) RETVAL_STRINGL(ZSTR_VAL(str),ZSTR_LEN(str),1)
+#endif
+
 #endif
 
 /*

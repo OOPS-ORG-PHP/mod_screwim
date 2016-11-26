@@ -236,7 +236,31 @@ ZEND_API zend_op_array * screwim_compile_file (zend_file_handle * file_handle, i
 	return org_compile_file (file_handle, type TSRMLS_CC);
 }
 
-PHP_FUNCTION(screwim_encrypt) {
+
+#if PHP_VERSION_ID < 60000
+zend_string * zend_string_alloc (size_t len, int persis) {
+	zend_string * buf;
+
+	buf = (zend_string *) emalloc (sizeof (zend_string));
+	buf->val = (char *) emalloc (sizeof (char) * len + 1);
+	memset (buf->val, 0, sizeof (char) * len + 1);
+	buf->len = len;
+
+	return buf;
+}
+
+void zend_string_free (zend_string * buf) {
+	if ( buf == NULL )
+		return;
+
+	if ( buf->val != NULL )
+		efree (buf->val);
+
+	efree (buf);
+}
+#endif
+
+PHP_FUNCTION (screwim_encrypt) {
 	zend_string * text;
 	zend_string * ndata;
 	char        * datap;
@@ -246,7 +270,13 @@ PHP_FUNCTION(screwim_encrypt) {
 	SCREWData     key;
 	short       * keybuf;
 
-	if ( zend_parse_parameters (ZEND_NUM_ARGS(), "S", &text) == FAILURE ) {
+#if PHP_VERSION_ID < 60000
+	text = (zend_string *) emalloc (sizeof (zend_string));
+	if ( zend_parse_parameters (ZEND_NUM_ARGS(), "s", &ZSTR_VAL(text), &ZSTR_LEN(text)) == FAILURE )
+#else
+	if ( zend_parse_parameters (ZEND_NUM_ARGS(), "S", &text) == FAILURE )
+#endif
+	{
 		return;
 	}
 
@@ -260,6 +290,10 @@ PHP_FUNCTION(screwim_encrypt) {
 
 	datap = zencode (ZSTR_VAL (text), ZSTR_LEN (text), (ULong *) &datalen);
 
+#if PHP_VERSION_ID < 60000
+	efree (text);
+#endif
+
 	key = mcryptkey ();
 	keybuf = (short *) key.buf;
 
@@ -268,7 +302,6 @@ PHP_FUNCTION(screwim_encrypt) {
 	}
 
 	efree (key.buf);
-
 
 	ndata = zend_string_alloc (datalen + SCREWIM_LEN, 0);
 	memcpy (ZSTR_VAL(ndata), SCREWIM, SCREWIM_LEN);
