@@ -76,7 +76,7 @@ screwim.enable = 1
 ### 4. APIs
 
 * ***(string) screwim_encrypt (string)***  
-  암호화된 데이터를 생성 합니다. runtime 중, 암호화된 설정 파일을 생성하는 데 이용할 수 있습니다.
+  암호화된 데이터를 생성 합니다. runtime 중, 암호화된 설정 파일을 생성하는 데 이용할 수 있습니다. 이 함수는 ***screwim.enable*** 옵션 여부의 영향을 받지 않습니다.
 
 ```php
   <?php
