@@ -10,13 +10,13 @@ The differences from the original PHP-screw are as follows:
  1. Improved performance by processing in memory rather than creating temporary files during decoding.
  2. Improved performance by changing memory reallocation logic when encoding or decoding large files.
  3. Improved performance by fixing duplicated file open (issue #4)
- 3. Only works if 'screwim.enable' option is on.
+ 4. Only works if 'screwim.enable' option is on.
   * Improved performance by don't check magic key under normal environment(regular php script).
   * See also [#3 add screwim.enable ini option issue](https://github.com/OOPS-ORG-PHP/mod_screwim/issues/3)
- 4. Fixed memory leaks.
- 5. Maybe thread safe.
- 6. Preventing problems that can be decompiled with [php_unscrew](https://github.com/dehydr8/php_unscrew)
- 6. And so on..
+ 5. Fixed memory leaks.
+ 6. Maybe thread safe.
+ 7. Preventing problems that can be decompiled with [php_unscrew](https://github.com/dehydr8/php_unscrew)
+ 8. And so on..
 
 ## Description
 
@@ -49,9 +49,10 @@ Copyright (c) 2016 JoungKyun.Kim
 ## Installation
 
 ### 1. Customize encrytion / decryption  
-  * change the encryption SEED key (***screwim_mcryptkey***) in ***my_screw.h*** into the values according to what you like.
-  * The encryption will be harder to break, if you add more values to the encryption SEED array.
-  * However, the size of the SEED is unrelated to the time of the decrypt processing.
+  * <s>change the encryption SEED key (***screwim_mcryptkey***) in ***my_screw.h*** into the values according to what you like.</s>
+  * <s>The encryption will be harder to break, if you add more values to the encryption SEED array.</s>
+  * <s>However, the size of the SEED is unrelated to the time of the decrypt processing.</s>
+  * The encryption SEED key is now automatically generated from 5 to 8 arrays at configure time. Don't use ***my_screw.h*** any more.
   * (***Optional***) Encrypted scripts get a stamp added to the beginning of the file. If you like, you may change this stamp defined by ***SCREWIM*** and ***SCREWIM_LEN*** in ***php_screwim.h***. ***SCREWIM_LEN*** must be less than or equal to the size of ***SCREWIM***.
 
 ### 2. Build and install  

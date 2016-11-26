@@ -77,7 +77,10 @@ SCREWData screwim_ext_buf (char * datap, ULong datalen) {
 	SCREWData   sdata;
 	int         i;
 
-	#include "my_screw.h"
+	short screwim_mycryptkey[] = {
+		SCREWIM_ENC_DATA
+	};
+
 	cryptkey_len = sizeof (screwim_mycryptkey) / sizeof (short);
 
 	for( i=0; i<datalen; i++ ) {

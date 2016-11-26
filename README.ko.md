@@ -13,10 +13,10 @@
  4. 'screawim.enable' 옵션이 활성화 되었을 경우에만 동작하도록 개선
   * 일반적인 상황에서는 암호화된 파일 보다는 정상적인 파일을 다루는 경우가 많으므로, 이 경우를 위하여 동작 여부를 옵션으로 처리하여 성능 개선.
   * [#3 add screwim.enable ini option issue](https://github.com/OOPS-ORG-PHP/mod_screwim/issues/3) 참조
- 4. 메모리 누수 수정
- 5. 아마도 thread safe 할 것으로 예상 ??
- 6. [php_unscrew](https://github.com/dehydr8/php_unscrew)로 decompile 가능한 문제를 좀 더 어렵게 수정
- 7. 그 외 다수..
+ 5. 메모리 누수 수정
+ 6. 아마도 thread safe 할 것으로 예상 ??
+ 7. [php_unscrew](https://github.com/dehydr8/php_unscrew)로 decompile 가능한 문제를 좀 더 어렵게 수정
+ 8. 그 외 다수..
 
 ## 설명
 
@@ -49,9 +49,10 @@ Copyright (c) 2016 JoungKyun.Kim
 ## 설치
 
 ### 1. 암호화 복호화 사용자 정의
-  * ***my_screw.h***의 암호화 SEED키(***screwim_mcryptkey***)를 원하는 값으로 변경을 합니다.
-  * 암호화 SEED 배열의 크기를 늘리면 암호화 강도를 더 높일 수 있습니다.
-  * 암호화 SEED 배열의 크기는 복고화 처리 시간에 영향을 주지 않습니다.
+  * <s>***my_screw.h***의 암호화 SEED키(***screwim_mcryptkey***)를 원하는 값으로 변경을 합니다.</s>
+  * <s>암호화 SEED 배열의 크기를 늘리면 암호화 강도를 더 높일 수 있습니다.</s>
+  * <s>암호화 SEED 배열의 크기는 복고화 처리 시간에 영향을 주지 않습니다.</s>
+  * 이제 ***configure***시에 암호화 SEED키는 5~8개의 배열로 자동 생성이 됩니다. 더이상 ***my_screw.h***를 사용하지 않습니다.
   * (***부가적으로***) 암호화된 스크립트는 파일의 처음 부분에 Magic key를 추가 한다. 이 magic key를 변경하고 싶을 경우, ***php_screwim.h***에서 ***SCREWIM***과 ***SCREWIM_LEN***의 값을 변경하면 됩니다. ***SCREWIM_LEN*** 값은 ***SCREWIM***에 지정된 문자열의 길이와 같거나 작아야 합니다.
 
 ### 2. 빌드 및 설치
