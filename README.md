@@ -16,7 +16,8 @@ The differences from the original PHP-screw are as follows:
  5. Fixed memory leaks.
  6. Maybe thread safe.
  7. Preventing problems that can be decompiled with [php_unscrew](https://github.com/dehydr8/php_unscrew)
- 8. And so on..
+ 8. support runtime encrypt function (***screwim_encrypt()***)
+ 9. And so on..
 
 ## Description
 
@@ -72,6 +73,25 @@ screwim.enable = 1
 
 By default, decryption does not work, so the performance of regular PHP files is better than the original PHP Screw. The screwim.enable option must be turned on for decryption to work. See also https://github.com/OOPS-ORG-PHP/mod_screwim/issues/3
 
+### 4. APIs
+
+* ***(string) screwim_encrypt (string)***  
+  Support runtime encryption. This API is not affected by the ***screwim.enable*** option.
+
+```php
+  <?php
+  $code = <<<EOF
+  <?php
+  $conf['url'] = 'http://domain.com/register';
+  $conf['pass'] = 'blah blah';
+  ?>
+  EOF;
+
+  $data = screwim_encrypt ($code);
+  file_put_contents ('./config/config.php', $data);
+  ?>
+```
+
 ## Encryption Tool
 
 The encription tool is located in ***mod_screwim/tools/***.
@@ -82,7 +102,7 @@ The encription tool is located in ***mod_screwim/tools/***.
 [root@host mod_screwim]$ cd tools
 [root@host tools]$ ./autogen.sh
 [root@host tools]$ ./configure --prefix=/usr
-[root@host tools]$ make
+[root@host tools]$ nmake
 [root@host tools]$ make install # Or copy the screwim file into an appropriate directory.
 [root@host tools]$ /usr/bin/screwim -h
 screwim 1.0.0 : encode or decode php file

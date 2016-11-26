@@ -53,13 +53,27 @@ typedef unsigned long  ULong; /* 32 bits or more */
 
 ZEND_DECLARE_MODULE_GLOBALS(screwim)
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_screwim, 0, 0, 1)
+	ZEND_ARG_INFO(0, string)
+ZEND_END_ARG_INFO()
+
+/* {{{ screwim_functions[]
+ *
+ * Every user visible function must have an entry in screwim_functions[].
+ */
+const zend_function_entry screwim_functions[] = {
+	PHP_FE(screwim_encrypt, arginfo_screwim)
+	{NULL, NULL, NULL}
+};
+/* }}} */
+
 static void php_screwim_init_globals(zend_screwim_globals *screwim_globals)
 {
 	screwim_globals->enabled = 0;
 }
 
 typedef struct screw_data {
-	char * buf;
+	void * buf;
 	size_t len;
 } SCREWData;
 
@@ -72,23 +86,43 @@ SCREWData screwdata_init (void) {
 	return data;
 }
 
-SCREWData screwim_ext_buf (char * datap, ULong datalen) {
-	int         cryptkey_len;
-	SCREWData   sdata;
-	int         i;
-
+SCREWData mcryptkey (void) {
+	SCREWData sdata;
+	short * buf;
+	int i;
 	short screwim_mycryptkey[] = {
 		SCREWIM_ENC_DATA
 	};
 
-	cryptkey_len = sizeof (screwim_mycryptkey) / sizeof (short);
+	sdata.len = sizeof (screwim_mycryptkey) / sizeof (short);
+	buf = (short *) emalloc (sizeof (screwim_mycryptkey));
+
+	for ( i=0; i<sdata.len; i++ )
+		buf[i] = screwim_mycryptkey[i];
+
+	sdata.buf = (short *) buf;
+
+	return sdata;
+}
+
+SCREWData screwim_ext_buf (char * datap, ULong datalen) {
+	int         cryptkey_len;
+	SCREWData   sdata;
+	SCREWData   key;
+	int         i;
+	short     * keybuf;
+
+	key = mcryptkey ();
+	keybuf = (short *) key.buf;
 
 	for( i=0; i<datalen; i++ ) {
-		datap[i] = (char) screwim_mycryptkey[(datalen - i) % cryptkey_len] ^ (~(datap[i]));
+		datap[i] = (char) keybuf[(datalen - i) % key.len] ^ (~(datap[i]));
 	}
 
+	efree (key.buf);
+
 	sdata = screwdata_init ();
-	sdata.buf = zdecode (datap, datalen, &sdata.len);
+	sdata.buf = (char *) zdecode (datap, datalen, &sdata.len);
 
 	return sdata;
 }
@@ -192,7 +226,7 @@ ZEND_API zend_op_array * screwim_compile_file (zend_file_handle * file_handle, i
 	if ( sdata.buf == NULL )
 		return NULL;
 
-	if ( zend_stream_fixup (file_handle, &tmp.buf, &tmp.len TSRMLS_CC) == FAILURE )
+	if ( zend_stream_fixup (file_handle, (char **) &tmp.buf, &tmp.len TSRMLS_CC) == FAILURE )
 		return NULL;
 
 	file_handle->handle.stream.mmap.buf = sdata.buf;
@@ -202,12 +236,58 @@ ZEND_API zend_op_array * screwim_compile_file (zend_file_handle * file_handle, i
 	return org_compile_file (file_handle, type TSRMLS_CC);
 }
 
+PHP_FUNCTION(screwim_encrypt) {
+	zend_string * text;
+	zend_string * ndata;
+	char        * datap;
+	ULong         datalen;
+	int           i;
+
+	SCREWData     key;
+	short       * keybuf;
+
+	if ( zend_parse_parameters (ZEND_NUM_ARGS(), "S", &text) == FAILURE ) {
+		return;
+	}
+
+	if ( ZSTR_LEN (text) == 0 )
+		RETURN_NULL ();
+
+	if ( memcmp (ZSTR_VAL (text), SCREWIM, SCREWIM_LEN) == 0 ) {
+		php_error (E_WARNING, "given data already crypted");
+		RETURN_STR (text);
+	}
+
+	datap = zencode (ZSTR_VAL (text), ZSTR_LEN (text), (ULong *) &datalen);
+
+	key = mcryptkey ();
+	keybuf = (short *) key.buf;
+
+	for( i=0; i<datalen; i++ ) {
+		datap[i] = (char) keybuf[(datalen - i) % key.len] ^ (~(datap[i]));
+	}
+
+	efree (key.buf);
+
+
+	ndata = zend_string_alloc (datalen + SCREWIM_LEN, 0);
+	memcpy (ZSTR_VAL(ndata), SCREWIM, SCREWIM_LEN);
+	memcpy (ZSTR_VAL(ndata) + SCREWIM_LEN, datap, datalen);
+	datalen += SCREWIM_LEN;
+	ZSTR_VAL(ndata)[datalen] = '\0';
+	efree (datap);
+
+	//RETURN_STR (ndata);
+	RETVAL_STR (ndata);
+	zend_string_free (ndata);
+}
+
 zend_module_entry screwim_module_entry = {
 #if ZEND_MODULE_API_NO >= 20010901
 	STANDARD_MODULE_HEADER,
 #endif
 	"screwim",
-	NULL,
+	screwim_functions,
 	PHP_MINIT(screwim),
 	PHP_MSHUTDOWN(screwim),
 	NULL,

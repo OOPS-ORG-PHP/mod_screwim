@@ -49,6 +49,8 @@ PHP_MINIT_FUNCTION (screwim);
 PHP_MSHUTDOWN_FUNCTION (screwim);
 PHP_MINFO_FUNCTION (screwim);
 
+PHP_FUNCTION(screwim_encrypt);
+
 ZEND_BEGIN_MODULE_GLOBALS(screwim)
 	zend_bool enabled;
 ZEND_END_MODULE_GLOBALS(screwim)

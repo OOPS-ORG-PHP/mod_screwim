@@ -16,7 +16,8 @@
  5. 메모리 누수 수정
  6. 아마도 thread safe 할 것으로 예상 ??
  7. [php_unscrew](https://github.com/dehydr8/php_unscrew)로 decompile 가능한 문제를 좀 더 어렵게 수정
- 8. 그 외 다수..
+ 8. runtime encrypt 함수 지원 (***screwim_encrypt()***)
+ 9. 그 외 다수..
 
 ## 설명
 
@@ -71,6 +72,25 @@ screwim.enable = 1
 ```
 
 기본적으로 ***screwim.enable*** 설정을 활성화 시키지 않으면, ***mod_screwim***은 복호화를 시도하지 않습니다. 이 의미는 ***screwim.enable***의 기본값이 0 이라는 의미 입니다. 이는 복호화를 할 필요가 없는 파일이 더 많은 환경을 위하여 선택적으로 복호화 로직을 처리할 수 있도록 설계가 되어 있습니다. 이에 대해서는 [#3 add screwim.enable ini option issue](https://github.com/OOPS-ORG-PHP/mod_screwim/issues/3) 이슈를 참고 하십시오.
+
+### 4. APIs
+
+* ***(string) screwim_encrypt (string)***  
+  암호화된 데이터를 생성 합니다. runtime 중, 암호화된 설정 파일을 생성하는 데 이용할 수 있습니다.
+
+```php
+  <?php
+  $code = <<<EOF
+  <?php
+  $conf['url'] = 'http://domain.com/register';
+  $conf['pass'] = 'blah blah';
+  ?>
+  EOF;
+
+  $data = screwim_encrypt ($code);
+  file_put_contents ('./config/config.php', $data);
+  ?>
+```
 
 ## 암호화 도구
 
