@@ -22,6 +22,8 @@ run-tests.php
 *.so
 *.screw
 *.discrew
+*.o
+stamp-h1
 build
 modules
 *~
