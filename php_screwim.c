@@ -467,11 +467,7 @@ PHP_FUNCTION (screwim_decrypt) {
 #endif
 	efree (datap);
 
-#if PHP_VERSION_ID < 60000
-	RETVAL_STRINGL (newdata.buf, newdata.len, 1);
-#else
-	RETVAL_STRINGL (newdata.buf, newdata.len);
-#endif
+	RETVAL_SCREWDATA (newdata);
 	efree (newdata.buf);
 } 
 #endif
