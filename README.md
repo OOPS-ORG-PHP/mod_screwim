@@ -51,9 +51,9 @@ Copyright (c) 2016 JoungKyun.Kim
 ## Installation
 
 ### 1. Customize encrytion / decryption  
-  * <s>change the encryption SEED key (***screwim_mcryptkey***) in ***my_screw.h*** into the values according to what you like.</s>
-  * <s>The encryption will be harder to break, if you add more values to the encryption SEED array.</s>
-  * <s>However, the size of the SEED is unrelated to the time of the decrypt processing.</s>
+  * ~~change the encryption SEED key (***screwim_mcryptkey***) in ***my_screw.h*** into the values according to what you like.~~
+  * ~~The encryption will be harder to break, if you add more values to the encryption SEED array.~~
+  * ~~However, the size of the SEED is unrelated to the time of the decrypt processing.~~
   * The encryption SEED key is now automatically generated from 5 to 8 arrays at configure time. Don't use ***my_screw.h*** any more. (craeted with the ***SCREWIM_ENC_DATA*** constant in config.h)
   * (***Optional***) Encrypted scripts get a stamp added to the beginning of the file. If you like, you may change this stamp defined by ***SCREWIM*** and ***SCREWIM_LEN*** in ***php_screwim.h***. ***SCREWIM_LEN*** must be less than or equal to the size of ***SCREWIM***.
 
@@ -63,9 +63,9 @@ Copyright (c) 2016 JoungKyun.Kim
   [root@host mod_screwim]$ ./configure
   [root@host mod_screwim]$ make install
   ```
-On configure, the ***--enable-screwim-decrypt*** option adds decrypt functions(***screwim_decrypt(), screwim_seed()***). This means that <u>you can decrypt an encrypted PHP file</u>.
+On configure, the ***--enable-screwim-decrypt*** option adds decrypt functions(***screwim_decrypt(), screwim_seed()***). This means that ***you can decrypt an encrypted PHP file***.
 
-If you are building <u>for distribution</u>, never add the --enable-screwim-decrypt option!
+If you are building ***for distribution***, never add the --enable-screwim-decrypt option!
 
 
 ### 3. Configuration
@@ -77,6 +77,8 @@ screwim.enable = 1
 ```
 
 By default, decryption does not work, so the performance of regular PHP files is better than the original PHP Screw. The screwim.enable option must be turned on for decryption to work. See also https://github.com/OOPS-ORG-PHP/mod_screwim/issues/3
+
+For detail on the settings, refer to the ***Execution*** item below.
 
 ### 4. APIs
 
@@ -130,7 +132,7 @@ By default, decryption does not work, so the performance of regular PHP files is
 ```
 
 
-## Encryption Tool
+## Command line Encryption Tool
 
 The encription tool is located in ***mod_screwim/tools/***.
 
@@ -190,17 +192,21 @@ Obviously encryption and decryption will degrade performance. Therefore, it is r
 
 To solve this problem, ***mod_screwim*** will return to the Zend compiler without checking the Magic key if the screwim.enable option is not enabled.
 
-<u>Therefore, it is best to minimize the encryption as much as possible, and it is recommended to include it in php after encrypting only certain functions.</u>
+***Therefore, it is best to minimize the encryption as much as possible, and it is recommended to include it in php after encrypting only certain functions***.
 
 Here is how to use the screwim.enable option:
 
-### 1. PHP configuration
+### 1. PHP configuration file
 
 ```ini
 screwim.enable = 1
 ```
 
-It is not recommended because it causes performance degradation when processing unencrypted php scripts.
+Add the above settings to the PHP configuration file(***php.ini*** and so on). It is not recommended because it causes ***performance degradation*** when processing unencrypted php scripts.
+
+Use this setting if there are not many connections or if there is sufficient resources.
+
+In the CLI environment, if you can use the CLI configuration file separately from the apache module or FPM, it is recommended to add the above settings to php.ini.
 
 ### 2. mod_php (Apache module) envionment
 
@@ -219,6 +225,8 @@ use -d option.
 ```bash
 [root@host ~]$ php -d screwim.enable=1 encrypted.php
 ```
+
+In the CLI environment, resource utilization is not high. If the configuration file is separate from the apache module or FPM, it is recommended that you add this option to your PHP configuration file.
 
 ### 4. embeded php code (Recommand)
 

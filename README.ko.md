@@ -51,9 +51,9 @@ Copyright (c) 2016 JoungKyun.Kim
 ## 설치
 
 ### 1. 암호화 복호화 사용자 정의
-  * <s>***my_screw.h***의 암호화 SEED키(***screwim_mcryptkey***)를 원하는 값으로 변경을 합니다.</s>
-  * <s>암호화 SEED 배열의 크기를 늘리면 암호화 강도를 더 높일 수 있습니다.</s>
-  * <s>암호화 SEED 배열의 크기는 복고화 처리 시간에 영향을 주지 않습니다.</s>
+  * ~~***my_screw.h***의 암호화 SEED키(***screwim_mcryptkey***)를 원하는 값으로 변경을 합니다.~~
+  * ~~암호화 SEED 배열의 크기를 늘리면 암호화 강도를 더 높일 수 있습니다.~~
+  * ~~암호화 SEED 배열의 크기는 복고화 처리 시간에 영향을 주지 않습니다.~~
   * 이제 ***configure***시에 암호화 SEED키는 5~8개의 배열로 자동 생성이 됩니다. 더이상 ***my_screw.h***를 사용하지 않습니다. (config.h의 ***SCREWIM_ENC_DATA*** 상수로 생성이 됩니다.)
   * (***부가적으로***) 암호화된 스크립트는 파일의 처음 부분에 Magic key를 추가 합니다. 이 magic key를 변경하고 싶을 경우, ***php_screwim.h***에서 ***SCREWIM***과 ***SCREWIM_LEN***의 값을 변경하면 됩니다. ***SCREWIM_LEN*** 값은 ***SCREWIM***에 지정된 문자열의 길이와 같거나 작아야 합니다.
 
@@ -64,7 +64,7 @@ Copyright (c) 2016 JoungKyun.Kim
   [root@host mod_screwim]$ make install
   ```
 
-configure 시에, ***--enable-screwim-decrypt*** 옵션을 주면, 복호화 기능(***screwim_decrypt(), screwim_seed()***)이 추가 됩니다. 즉, <u>암호화된 PHP 파일을 복호화 할 수 있다</u>는 의미입니다.
+configure 시에, ***--enable-screwim-decrypt*** 옵션을 주면, 복호화 기능(***screwim_decrypt(), screwim_seed()***)이 추가 됩니다. 즉, ***암호화된 PHP 파일을 복호화 할 수 있다***는 의미입니다.
 
 ***--enable-screwim-decrypt*** 옵션은 배포용으로 빌드를 할 경우에는 절대 추가하면 안됩니다!
 
@@ -77,6 +77,8 @@ screwim.enable = 1
 ```
 
 기본적으로 ***screwim.enable*** 설정을 활성화 시키지 않으면, ***mod_screwim***은 복호화를 시도하지 않습니다. 이 의미는 ***screwim.enable***의 기본값이 0 이라는 의미 입니다. 이는 복호화를 할 필요가 없는 파일이 더 많은 환경을 위하여 선택적으로 복호화 로직을 처리할 수 있도록 설계가 되어 있습니다. 이에 대해서는 [#3 add screwim.enable ini option issue](https://github.com/OOPS-ORG-PHP/mod_screwim/issues/3) 이슈를 참고 하십시오.
+
+설정에 대한 자세한 사항은 아래의 ***실행*** 항목을 참고 하십시오.
 
 ### 4. APIs
 
@@ -190,11 +192,11 @@ extension=screwim.so
 
 ***mod_screwim***은 이 문제를 해결하기 위하여, ***screwim.enable*** 옵션이 활성화가 되어 있지 않으면, 1번 사항 Magic key 체크를 하지 않고 바로 Zend compiler로 복귀를 하게 설계가 되어 있습니다.
 
-<u>그러므로, 될 수 있는한 암호화는 최소화 하는 것이 좋으며, 특정 기능만 암호화 하여, php에서 include 하여 사용하는 것을 권장 합니다.</u>
+***그러므로, 될 수 있는한 암호화는 최소화 하는 것이 좋으며, 특정 기능만 암호화 하여, php에서 include 하여 사용하는 것을 권장 합니다.***
 
 다음은 ***screwim.enable*** 옵션을 사용하는 방법을 기술 합니다.:
 
-### 1. PHP 설정
+### 1. PHP 설정 파일
 
 ```ini
 screwim.enable = 1
