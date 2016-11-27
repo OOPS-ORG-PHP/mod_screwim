@@ -116,7 +116,7 @@ For detail on the settings, refer to the ***Execution*** item below.
   ?>
 ```
 
-* ***(string) screwim_seed (void)***
+* ***(object) screwim_seed (void)***
  * The ***--enable-screwim-decrypt*** option must be given at build time.
  * Returns ***encrypt seed key*** of current ***mod_screwim.so***
  * Can be used instead of ***tools/screwim*** command
@@ -126,8 +126,14 @@ For detail on the settings, refer to the ***Execution*** item below.
 
 ```php
   <?php
-  // returns like 6b22886a0f4faa5f37783d36944d7823e707
-  echo screwim_seed ();
+  // returns follow
+  // stdClass Object
+  // (
+  //     [keybyte] => 6b22886a0f4faa5f37783d36944d7823e707
+  //     [keystr] => 8811, 27272, 20239, 24490, 30775, 13885, 19860, 9080, 2023
+  //     [headerlen] => 14
+  // )
+  print_r (screwim_seed ());
   ?>
 ```
 

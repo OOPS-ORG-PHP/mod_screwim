@@ -132,6 +132,15 @@ int main (int argc, char ** argv) {
 				}
 				printf ("\n");
 
+				printf ("KEY STRING    : ");
+
+				for ( i=0; i<cryptkey_len; i++ ) {
+					printf ("%d", screwim_mycryptkey[i]);
+					if ( i != (cryptkey_len - 1) )
+						printf (", ");
+				}
+				printf ("\n");
+
 				return 0;
 			case 'h' :
 			default :

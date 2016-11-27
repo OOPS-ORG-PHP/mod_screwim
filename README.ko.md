@@ -116,7 +116,7 @@ screwim.enable = 1
   ?>
 ```
 
-* ***(string) screwim_seed (void)***
+* ***(object) screwim_seed (void)***
  * ***configure*** 시에 ***--enable-screwim-decrypt*** 옵션이 필요 합니다.
  * 현재 모듈의 encrypt seed key를 반환 합니다.
  * ***tools/screwim*** 명령어 대신 사용할 수 있습니다.
@@ -125,8 +125,14 @@ screwim.enable = 1
 
 ```php
   <?php
-  // returns like 6b22886a0f4faa5f37783d36944d7823e707
-  echo screwim_seed ();
+  // returns follow
+  // stdClass Object
+  // (
+  //     [keybyte] => 6b22886a0f4faa5f37783d36944d7823e707
+  //     [keystr] => 8811, 27272, 20239, 24490, 30775, 13885, 19860, 9080, 2023
+  //     [headerlen] => 14
+  // )
+  print_r (screwim_seed ());
   ?>
 ```
 

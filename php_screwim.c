@@ -477,7 +477,7 @@ PHP_FUNCTION (screwim_decrypt) {
 #endif
 /* end of PHP_FUNCTION(screwim_decrypt) }}} */
 
-/* {{{ +-- PHP_FUNCTION (string) screwim_seed (void)
+/* {{{ +-- PHP_FUNCTION (object) screwim_seed (void)
  * return strings
  */
 #ifdef SCREWIM_DECRYPT
@@ -485,7 +485,9 @@ PHP_FUNCTION (screwim_seed) {
 	SCREWData   key;
 	int         i, j, buflen;
 	short     * keybuf;
-	char      * buf;
+	char      * tmp;
+	char      * keybyte;
+	char      * keystr;
 
 	// only execute on cli mode
 	if ( strcmp (sapi_module.name, "cli") != 0 )
@@ -506,19 +508,39 @@ PHP_FUNCTION (screwim_seed) {
 	keybuf = (short *) key.buf;
 	buflen = key.len * 4;
 
-	buf = emalloc (buflen + 1);
-	memset (buf, 0, buflen + 1);
+	keybyte = emalloc (buflen + 1);
+	memset (keybyte, 0, buflen + 1);
 
 	for ( i=0; i<key.len; i++ ) {
 		j = i * 4;
-		sprintf (buf + j, "%04x", revert_endian (keybuf[i]));
+		sprintf (keybyte + j, "%04x", revert_endian (keybuf[i]));
 	}
 
-#if PHP_VERSION_ID < 60000
-	RETURN_STRINGL (buf, buflen, 1);
-#else
-	RETURN_STRINGL (buf, buflen);
-#endif
+	buflen = key.len * 7;
+	keystr = emalloc (buflen + 1);
+	memset (keystr, 0, buflen + 1);
+
+	for ( i=0; i<key.len; i++ ) {
+		j = strlen (keystr);
+		sprintf (keystr + j, "%d, ", keybuf[i]);
+	}
+
+	tmp = strrchr (keystr, ',');
+	if ( tmp != NULL )
+		*tmp = 0;
+
+	if ( object_init (return_value) == FAILURE ) {
+		php_error(E_WARNING, "screwim_seed() failure object initialize");
+		efree (keybyte);
+		efree (keystr);
+		RETURN_NULL ();
+	}
+
+	add_property_string (return_value, "keybyte", keybyte);
+	add_property_string (return_value, "keystr", keystr);
+	add_property_long (return_value, "headerlen", SCREWIM_LEN);
+	efree (keybyte);
+	efree (keystr);
 }
 #endif
 /* end of PHP_FUNCTION(screwim_seed) }}} */
