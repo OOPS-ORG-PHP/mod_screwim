@@ -152,6 +152,7 @@ screwim.enable = 1
 [root@host tools]$ /usr/bin/screwim -h
 screwim 1.0.0 : encode or decode php file
 Usage: screwim [OPTION] PHP_FILE
+   -c VAL, --convert=VAL convert key byte to digits
    -d,     --decode   decrypt encrypted php script
    -h,     --help     this help messages
    -H VAL, --hlen=VAL length of magic key(SCREWIM_LEN or PM9SCREW_LEN). use with -d mode

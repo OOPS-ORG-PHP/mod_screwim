@@ -67,6 +67,7 @@ static struct option long_options[] = { // {{{
 	{ "view",   no_argument,       NULL, 'v' },
 
 	/* Options accepting an argument: */
+	{ "convert", required_argument, NULL, 'c' },
 	{ "hlen",   required_argument, NULL, 'H' },
 	{ "key",    required_argument, NULL, 'k' },
 	{ 0, 0, 0, 0 }
@@ -79,6 +80,7 @@ void usage (void) {
 		stderr,
 		"%s : encode or decode php file\n"
 		"Usage: %s [OPTION] PHP_FILE\n"
+		"   -c VAL, --convert=VAL convert key byte to digits\n"
 		"   -d,     --decode   decrypt encrypted php script\n"
 		"   -h,     --help     this help messages\n"
 		"   -H VAL, --hlen=VAL length of magic key(SCREWIM_LEN or PM9SCREW_LEN).\n"
@@ -108,12 +110,30 @@ int main (int argc, char ** argv) {
 	char   * key = NULL;
 
 #ifdef HAVE_GETOPT_LONG
-	while ( (opt = getopt_long (argc, (char *const *)argv, "dhH:k:v", long_options, (int *) 0)) != EOF )
+	while ( (opt = getopt_long (argc, (char *const *)argv, "c:dhH:k:v", long_options, (int *) 0)) != EOF )
 #else
-	while ( (opt = getopt (argc, (char *const *)argv, "dhH:k:v")) != EOF )
+	while ( (opt = getopt (argc, (char *const *)argv, "c:dhH:k:v")) != EOF )
 #endif
 	{
 		switch (opt) {
+			case 'c' :
+				hlen = strlen (optarg) / 4;
+				if ( (strlen (optarg) % 4) != 0 )
+					hlen++;
+
+				{
+					short * key;
+					key = generate_key (optarg, hlen);
+
+					for ( i=0; i<hlen; i++ ) {
+						printf ("%d", key[i]);
+						if ( i != (hlen - 1) )
+							printf (", ");
+					}
+				}
+				printf ("\n");
+
+				return 0;
 			case 'd' :
 				mode++;
 				break;
