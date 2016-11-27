@@ -158,7 +158,18 @@ Add next line to php configuration file (php.ini and so on)
 extension=screwim.so
 ```
 
-By default, decryption does not work, so the performance of regular PHP files is better than the original PHP Screw. The screwim.enable option must be turned on for decryption to work.
+The decryption does not work by default, when loading module.
+
+The decryption process is as follows:
+  1. Open the file and verify that the beginning of the file starts with the Magic key. (Check if the file is encrypted with ScrewIm)
+  2. If the file is unencrypted(If the Magic key is missing or different), return to the zend compiler without working.
+  3. Once the Magic key is confirmed, return to zend compile after decoding.
+
+Obviously encryption and decryption will degrade performance. Therefore, it is recommended to reduce the number of encrypted documents as much as possible. However, even if you do not encrypt it, opening all files to check for encryption also causes performance degradation. In particular, a large number of connections can cause serious performance degradation.
+
+To solve this problem, ***mod_screwim*** will return to the Zend compiler without checking the Magic key if the screwim.enable option is not enabled.
+
+<u>Therefore, it is best to minimize the encryption as much as possible, and it is recommended to include it in php after encrypting only certain functions.</u>
 
 Here is how to use the screwim.enable option:
 
