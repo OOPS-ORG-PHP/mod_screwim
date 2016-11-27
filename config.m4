@@ -1,13 +1,17 @@
-dnl config.m4 for extension mod_scwreim
+dnl config.m4 for extension mod_screwim
 
-PHP_ARG_WITH(scwreim, for scwreim support,
+PHP_ARG_WITH(screwim, for screwim support,
 dnl Make sure that the comment is aligned:
-[  --with-scwreim             Include scwreim support])
+[  --with-screwim          Include screwim support])
 
-AC_DEFINE_UNQUOTED(SCREWIM_NAME, "ScrewIm", [ ])
-AC_DEFINE_UNQUOTED(SCREWIM_STRING, "PHP Screw Improved", [ ])
-AC_DEFINE_UNQUOTED(SCREWIM_VERSION, "1.0.0", [ ])
+PHP_ARG_ENABLE(screwim-decrypt, whether to enable ScrewIm decrypt api support,
+[  --enable-screwim-decrypt Support screwim_decrypt function [[default=no]]], no, no)
 
+AC_DEFINE_UNQUOTED(SCREWIM_NAME, "ScrewIm", [Define to ScrewIm Name])
+AC_DEFINE_UNQUOTED(SCREWIM_STRING, "PHP Screw Improved", [Define to ScrewIm Full Name])
+AC_DEFINE_UNQUOTED(SCREWIM_VERSION, "1.0.0", [Define to ScrewIm version])
+
+dnl {{{ +-- function config_screwim_random ()
 function config_screwim_random () {
 	if test $# -ne 3 ; then
 		echo "ERROR: sreandom start_range end_range var_name" >& /dev/sterr
@@ -27,7 +31,9 @@ function config_screwim_random () {
 
 	eval "$vname=$r"
 }
+dnl }}}
 
+dnl {{{ +-- function config_screwim_seq() {
 function config_screwim_seq() {
 	local start=$1
 	local end=$2
@@ -39,6 +45,7 @@ function config_screwim_seq() {
 		test $start -gt $end && break
 	done
 }
+dnl }}}
 
 config_screwim_random 5 10 seed_no
 
@@ -56,14 +63,21 @@ AC_DEFUN([AC_SCREWIM_UNDEFINE], [
     rm confdefs.h.tmp
 ])
 
-AC_DEFINE_UNQUOTED(SCREWIM_ENC_DATA, $SCREWIM_ENC_DATA, [ ])
-AC_SCREWIM_UNDEFINE(PACKAGE_BUGREPORT)
-AC_SCREWIM_UNDEFINE(PACKAGE_NAME)
-AC_SCREWIM_UNDEFINE(PACKAGE_STRING)
-AC_SCREWIM_UNDEFINE(PACKAGE_TARNAME)
-AC_SCREWIM_UNDEFINE(PACKAGE_URL)
-AC_SCREWIM_UNDEFINE(PACKAGE_VERSION)
 
-if test "$PHP_scwreim" != "no"; then
-  PHP_NEW_EXTENSION(screwim, php_screwim.c zencode.c, $ext_shared)
+if test "$PHP_SCREWIM" != "no"; then
+	AC_DEFINE_UNQUOTED(SCREWIM_ENC_DATA, $SCREWIM_ENC_DATA, [Define to ScrewIm encrypt SEED key])
+	PHP_NEW_EXTENSION(screwim, php_screwim.c zencode.c, $ext_shared)
+
+	if test "$PHP_SCREWIM_DECRYPT"; then
+		AC_DEFINE(SCREWIM_DECRYPT, 1, [define to support ScrewIm decrypt api ])
+	fi
+
+	if test "$PHP_SCREWIM_SHARED" = "yes"; then
+		AC_SCREWIM_UNDEFINE(PACKAGE_BUGREPORT)
+		AC_SCREWIM_UNDEFINE(PACKAGE_NAME)
+		AC_SCREWIM_UNDEFINE(PACKAGE_STRING)
+		AC_SCREWIM_UNDEFINE(PACKAGE_TARNAME)
+		AC_SCREWIM_UNDEFINE(PACKAGE_URL)
+		AC_SCREWIM_UNDEFINE(PACKAGE_VERSION)
+	fi
 fi

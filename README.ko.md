@@ -17,7 +17,8 @@
  6. 아마도 thread safe 할 것으로 예상 ??
  7. [php_unscrew](https://github.com/dehydr8/php_unscrew)로 decompile 가능한 문제를 좀 더 어렵게 수정
  8. runtime encrypt 함수 지원 (***screwim_encrypt()***)
- 9. 그 외 다수..
+ 9. runtime decrypt 함수 지원 (***screwim_decrypt(), screwim_seed()***)
+ 10. 그 외 다수..
 
 ## 설명
 
@@ -54,7 +55,7 @@ Copyright (c) 2016 JoungKyun.Kim
   * <s>암호화 SEED 배열의 크기를 늘리면 암호화 강도를 더 높일 수 있습니다.</s>
   * <s>암호화 SEED 배열의 크기는 복고화 처리 시간에 영향을 주지 않습니다.</s>
   * 이제 ***configure***시에 암호화 SEED키는 5~8개의 배열로 자동 생성이 됩니다. 더이상 ***my_screw.h***를 사용하지 않습니다.
-  * (***부가적으로***) 암호화된 스크립트는 파일의 처음 부분에 Magic key를 추가 한다. 이 magic key를 변경하고 싶을 경우, ***php_screwim.h***에서 ***SCREWIM***과 ***SCREWIM_LEN***의 값을 변경하면 됩니다. ***SCREWIM_LEN*** 값은 ***SCREWIM***에 지정된 문자열의 길이와 같거나 작아야 합니다.
+  * (***부가적으로***) 암호화된 스크립트는 파일의 처음 부분에 Magic key를 추가 합니다. 이 magic key를 변경하고 싶을 경우, ***php_screwim.h***에서 ***SCREWIM***과 ***SCREWIM_LEN***의 값을 변경하면 됩니다. ***SCREWIM_LEN*** 값은 ***SCREWIM***에 지정된 문자열의 길이와 같거나 작아야 합니다.
 
 ### 2. 빌드 및 설치
   ```bash
@@ -62,6 +63,10 @@ Copyright (c) 2016 JoungKyun.Kim
   [root@host mod_screwim]$ ./configure
   [root@host mod_screwim]$ make install
   ```
+
+configure 시에, ***--enable-screwim-decrypt*** 옵션을 주면, 복호화 기능(***screwim_decrypt(), screwim_seed()***)이 추가 됩니다. 즉, <u>암호화된 PHP 파일을 복호화 할 수 있다</u>는 의미입니다.
+
+***--enab le-screwim-decrypt*** 옵션은 배포용으로 빌드를 할 경우에는 절대 추가하면 안됩니다!
 
 ### 3. 설정
 다음 라인을 ***php 설정 파일(php.ini 등)***에 추가를 합니다.
@@ -96,15 +101,30 @@ screwim.enable = 1
 ```
 
 * ***(string) screwim_decrypt (string, (optional) key, (optional) magickey_len)***  
+ * ***configure*** 시에 ***--enable-screwim-decrypt*** 옵션이 필요 합니다.
  * PHP 실행 중에, 암호화된 data를 복호화 합니다.
  * ***tools/screwim*** 명령어 대신 사용할 수 있습니다.
- * CLI 모드가 아니거나 root 권한이 아닐 경우, E_ERROR 처리 됩니다.
+ * CLI 모드가 아니거나 root 권한이 아닐 경우, ***E_ERROR*** 처리 됩니다.
  * ***screwim.enable*** 옵션 여부의 영향을 받지 않습니다.
 
 ```php
   <?php
   $config = file_get_contents ('./config/config.php');
   echo screwim_decrypt ($config);
+  ?>
+```
+
+* ***(string) screwim_seed (void)***
+ * ***configure*** 시에 ***--enable-screwim-decrypt*** 옵션이 필요 합니다.
+ * 현재 모듈의 encrypt seed key를 반환 합니다.
+ * ***tools/screwim*** 명령어 대신 사용할 수 있습니다.
+ * CLI 모드가 아니거나 root 권한이 아닐 경우, ***E_ERROR*** 처리 됩니다.
+ * ***screwim.enable*** 옵션 여부의 영향을 받지 않습니다.
+
+```php
+  <?php
+  // returns like 6b22886a0f4faa5f37783d36944d7823e707
+  echo screwim_seed ();
   ?>
 ```
 

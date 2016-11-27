@@ -17,7 +17,8 @@ The differences from the original PHP-screw are as follows:
  6. Maybe thread safe.
  7. Preventing problems that can be decompiled with [php_unscrew](https://github.com/dehydr8/php_unscrew)
  8. support runtime encrypt function (***screwim_encrypt()***)
- 9. And so on..
+ 9. support runtime decrypt function (***screwim_decrypt(), screwim_seed()***)
+ 10. And so on..
 
 ## Description
 
@@ -62,6 +63,10 @@ Copyright (c) 2016 JoungKyun.Kim
   [root@host mod_screwim]$ ./configure
   [root@host mod_screwim]$ make install
   ```
+On configure, the ***--enable-screwim-decrypt*** option adds decrypt functions(***screwim_decrypt(), screwim_seed()***). This means that <u>you can decrypt an encrypted PHP file</u>.
+
+If you are building <u>for distribution</u>, never add the --enable-screwim-decrypt option!
+
 
 ### 3. Configuration
 Add next line to php configuration file (php.ini and so on)
@@ -95,6 +100,7 @@ By default, decryption does not work, so the performance of regular PHP files is
 ```
 
 * ***(string) screwim_decrypt (string, (optional) key, (optional) magickey_len)***  
+ * The ***--enable-screwim-decrypt*** option must be given at build time.
  * Support runtime decryption.
  * Can be used instead of ***tools/screwim*** command
  * When call in an environment other than ***CLI mode***, ***E_ERROR*** occurs.
@@ -105,6 +111,21 @@ By default, decryption does not work, so the performance of regular PHP files is
   <?php
   $config = file_get_contents ('./config/config.php');
   echo screwim_decrypt ($config);
+  ?>
+```
+
+* ***(string) screwim_seed (void)***
+ * The ***--enable-screwim-decrypt*** option must be given at build time.
+ * Returns ***encrypt seed key*** of current ***mod_screwim.so***
+ * Can be used instead of ***tools/screwim*** command
+ * When call in an environment other than ***CLI mode***, ***E_ERROR*** occurs.
+ * When not running as ***root privileges***, ***E_ERROR*** occurs.
+ * This API is not affected by the ***screwim.enable*** option.
+
+```php
+  <?php
+  // returns like 6b22886a0f4faa5f37783d36944d7823e707
+  echo screwim_seed ();
   ?>
 ```
 

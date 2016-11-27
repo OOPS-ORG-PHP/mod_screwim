@@ -49,7 +49,10 @@ PHP_MSHUTDOWN_FUNCTION (screwim);
 PHP_MINFO_FUNCTION (screwim);
 
 PHP_FUNCTION(screwim_encrypt);
+#ifdef SCREWIM_DECRYPT
 PHP_FUNCTION(screwim_decrypt);
+PHP_FUNCTION(screwim_seed);
+#endif
 
 ZEND_BEGIN_MODULE_GLOBALS(screwim)
 	zend_bool enabled;

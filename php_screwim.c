@@ -60,11 +60,13 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_screwim_encrypt, 0, 0, 1)
 	ZEND_ARG_INFO(0, string)
 ZEND_END_ARG_INFO()
 
+#ifdef SCREWIM_DECRYPT
 ZEND_BEGIN_ARG_INFO_EX(arginfo_screwim_decrypt, 0, 0, 1)
 	ZEND_ARG_INFO(0, string)
 	ZEND_ARG_INFO(0, key)
 	ZEND_ARG_INFO(0, heder_len)
 ZEND_END_ARG_INFO()
+#endif
 /* }}} */
 
 /* {{{ +-- screwim_functions[]
@@ -73,13 +75,16 @@ ZEND_END_ARG_INFO()
  */
 const zend_function_entry screwim_functions[] = {
 	PHP_FE(screwim_encrypt, arginfo_screwim_encrypt)
+#ifdef SCREWIM_DECRYPT
 	PHP_FE(screwim_decrypt, arginfo_screwim_decrypt)
+	PHP_FE(screwim_seed, NULL)
+#endif
 	{NULL, NULL, NULL}
 };
 /* }}} */
 
 typedef struct screw_data {
-	void * buf; // {{{
+	void * buf;
 	size_t len;
 } SCREWData;
 
@@ -386,6 +391,7 @@ PHP_FUNCTION (screwim_encrypt) {
 /* {{{ +-- PHP_FUNCTION (string) screwim_decrypt (string, (optional) key, (optional) magickey_len)
  * return strings
  */
+#ifdef SCREWIM_DECRYPT
 PHP_FUNCTION (screwim_decrypt) {
 	zend_string * text;
 	zend_string * key = NULL;
@@ -398,11 +404,11 @@ PHP_FUNCTION (screwim_decrypt) {
 
 	// only execute on cli mode
 	if ( strcmp (sapi_module.name, "cli") != 0 )
-		php_error (E_ERROR, "screwim_decrypt api can only be executed in CLI mode");
+		php_error (E_ERROR, "screwim_decrypt() can only be executed in CLI mode");
 	else {
 		int uid = getuid ();
 		if ( uid != 0 ) {
-			php_error (E_ERROR, "screwim_decrypt api can only be executed by root privileges");
+			php_error (E_ERROR, "screwim_decrypt() can only be executed by root privileges");
 		}
 	}
 
@@ -468,7 +474,54 @@ PHP_FUNCTION (screwim_decrypt) {
 #endif
 	efree (newdata.buf);
 } 
+#endif
 /* end of PHP_FUNCTION(screwim_decrypt) }}} */
+
+/* {{{ +-- PHP_FUNCTION (string) screwim_seed (void)
+ * return strings
+ */
+#ifdef SCREWIM_DECRYPT
+PHP_FUNCTION (screwim_seed) {
+	SCREWData   key;
+	int         i, j, buflen;
+	short     * keybuf;
+	char      * buf;
+
+	// only execute on cli mode
+	if ( strcmp (sapi_module.name, "cli") != 0 )
+		php_error (E_ERROR, "screwim_seed() can only be executed in CLI mode");
+	else {
+		int uid = getuid ();
+		if ( uid != 0 ) {
+			php_error (E_ERROR, "screwim_seed() can only be executed by root privileges");
+		}
+	}
+
+	if ( ZEND_NUM_ARGS () > 0 ) {
+		php_error (E_WARNING, "screwim_seed() expects exactly 0 parameter, %d given", ZEND_NUM_ARGS ());
+		return;
+	}
+	
+	key = mcryptkey (NULL);
+	keybuf = (short *) key.buf;
+	buflen = key.len * 4;
+
+	buf = emalloc (buflen + 1);
+	memset (buf, 0, buflen + 1);
+
+	for ( i=0; i<key.len; i++ ) {
+		j = i * 4;
+		sprintf (buf + j, "%04x", revert_endian (keybuf[i]));
+	}
+
+#if PHP_VERSION_ID < 60000
+	RETURN_STRINGL (buf, buflen, 1);
+#else
+	RETURN_STRINGL (buf, buflen);
+#endif
+}
+#endif
+/* end of PHP_FUNCTION(screwim_seed) }}} */
 
 /* {{{ +-- PHP Module resgistration
  */
