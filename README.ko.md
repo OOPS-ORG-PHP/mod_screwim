@@ -54,7 +54,7 @@ Copyright (c) 2016 JoungKyun.Kim
   * <s>***my_screw.h***의 암호화 SEED키(***screwim_mcryptkey***)를 원하는 값으로 변경을 합니다.</s>
   * <s>암호화 SEED 배열의 크기를 늘리면 암호화 강도를 더 높일 수 있습니다.</s>
   * <s>암호화 SEED 배열의 크기는 복고화 처리 시간에 영향을 주지 않습니다.</s>
-  * 이제 ***configure***시에 암호화 SEED키는 5~8개의 배열로 자동 생성이 됩니다. 더이상 ***my_screw.h***를 사용하지 않습니다.
+  * 이제 ***configure***시에 암호화 SEED키는 5~8개의 배열로 자동 생성이 됩니다. 더이상 ***my_screw.h***를 사용하지 않습니다. (config.h의 ***SCREWIM_ENC_DATA*** 상수로 생성이 됩니다.)
   * (***부가적으로***) 암호화된 스크립트는 파일의 처음 부분에 Magic key를 추가 합니다. 이 magic key를 변경하고 싶을 경우, ***php_screwim.h***에서 ***SCREWIM***과 ***SCREWIM_LEN***의 값을 변경하면 됩니다. ***SCREWIM_LEN*** 값은 ***SCREWIM***에 지정된 문자열의 길이와 같거나 작아야 합니다.
 
 ### 2. 빌드 및 설치

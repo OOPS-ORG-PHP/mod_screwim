@@ -54,7 +54,7 @@ Copyright (c) 2016 JoungKyun.Kim
   * <s>change the encryption SEED key (***screwim_mcryptkey***) in ***my_screw.h*** into the values according to what you like.</s>
   * <s>The encryption will be harder to break, if you add more values to the encryption SEED array.</s>
   * <s>However, the size of the SEED is unrelated to the time of the decrypt processing.</s>
-  * The encryption SEED key is now automatically generated from 5 to 8 arrays at configure time. Don't use ***my_screw.h*** any more.
+  * The encryption SEED key is now automatically generated from 5 to 8 arrays at configure time. Don't use ***my_screw.h*** any more. (craeted with the ***SCREWIM_ENC_DATA*** constant in config.h)
   * (***Optional***) Encrypted scripts get a stamp added to the beginning of the file. If you like, you may change this stamp defined by ***SCREWIM*** and ***SCREWIM_LEN*** in ***php_screwim.h***. ***SCREWIM_LEN*** must be less than or equal to the size of ***SCREWIM***.
 
 ### 2. Build and install  
