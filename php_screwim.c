@@ -54,6 +54,8 @@ typedef unsigned long  ULong; /* 32 bits or more */
 
 ZEND_DECLARE_MODULE_GLOBALS(screwim)
 
+/* {{{ php function argument info
+ */
 ZEND_BEGIN_ARG_INFO_EX(arginfo_screwim_encrypt, 0, 0, 1)
 	ZEND_ARG_INFO(0, string)
 ZEND_END_ARG_INFO()
@@ -63,8 +65,9 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_screwim_decrypt, 0, 0, 1)
 	ZEND_ARG_INFO(0, key)
 	ZEND_ARG_INFO(0, heder_len)
 ZEND_END_ARG_INFO()
+/* }}} */
 
-/* {{{ screwim_functions[]
+/* {{{ +-- screwim_functions[]
  *
  * Every user visible function must have an entry in screwim_functions[].
  */
@@ -75,16 +78,23 @@ const zend_function_entry screwim_functions[] = {
 };
 /* }}} */
 
-static void php_screwim_init_globals(zend_screwim_globals *screwim_globals)
-{
-	screwim_globals->enabled = 0;
-}
-
 typedef struct screw_data {
-	void * buf;
+	void * buf; // {{{
 	size_t len;
 } SCREWData;
 
+/* {{{ +-- Internal APIs
+ */
+
+/* {{{ +-- static void php_screwim_init_globals(zend_screwim_globals *screwim_globals)
+ */
+static void php_screwim_init_globals(zend_screwim_globals *screwim_globals) {
+	screwim_globals->enabled = 0;
+}
+/* }}} */
+
+/* {{{ +-- SCREWData screwdata_init (void)
+ */
 SCREWData screwdata_init (void) {
 	SCREWData data;
 
@@ -93,7 +103,10 @@ SCREWData screwdata_init (void) {
 
 	return data;
 }
+/* }}} */
 
+/* {{{ +-- SCREWData mcryptkey (char * key)
+ */
 SCREWData mcryptkey (char * key) {
 	SCREWData sdata;
 	short * buf;
@@ -120,7 +133,10 @@ SCREWData mcryptkey (char * key) {
 
 	return sdata;
 }
+/* }}} */
 
+/* {{{ +-- SCREWData screwim_ext_buf (char * datap, ULong datalen, char * ukey)
+ */
 SCREWData screwim_ext_buf (char * datap, ULong datalen, char * ukey) {
 	int         cryptkey_len;
 	SCREWData   sdata;
@@ -142,9 +158,11 @@ SCREWData screwim_ext_buf (char * datap, ULong datalen, char * ukey) {
 
 	return sdata;
 }
+/* }}} */
 
-SCREWData screwim_ext_fopen (FILE * fp)
-{
+/* {{{ +-- SCREWData screwim_ext_fopen (FILE * fp)
+ */
+SCREWData screwim_ext_fopen (FILE * fp) {
 	struct      stat stat_buf;
 	SCREWData   sdata;
 	char      * datap = NULL;
@@ -162,7 +180,10 @@ SCREWData screwim_ext_fopen (FILE * fp)
 
 	return sdata;
 }
+/* }}} */
 
+/* {{{ +-- SCREWData screwim_ext_mmap (zend_file_handle * file_handle)
+ */
 SCREWData screwim_ext_mmap (zend_file_handle * file_handle) {
 	SCREWData   sdata;
 	char      * nbuf;
@@ -181,9 +202,11 @@ SCREWData screwim_ext_mmap (zend_file_handle * file_handle) {
 
 	return sdata;
 }
+/* }}} */
 
 ZEND_API zend_op_array *(*org_compile_file)(zend_file_handle * file_handle, int type TSRMLS_DC);
 
+// {{{ +-- ZEND_API zend_op_array * screwim_compile_file (zend_file_handle *, int TSRMLS_DC)
 ZEND_API zend_op_array * screwim_compile_file (zend_file_handle * file_handle, int type TSRMLS_DC)
 {
 	FILE      * fp;
@@ -251,9 +274,14 @@ ZEND_API zend_op_array * screwim_compile_file (zend_file_handle * file_handle, i
 
 	return org_compile_file (file_handle, type TSRMLS_CC);
 }
+/* }}} */
 
+/* {{{ for PHP 5 APIs
+ */
 
 #if PHP_VERSION_ID < 60000
+/* {{{ +-- zend_string * zend_string_alloc (size_t len, int persis)
+ */
 zend_string * zend_string_alloc (size_t len, int persis) {
 	zend_string * buf;
 
@@ -264,7 +292,10 @@ zend_string * zend_string_alloc (size_t len, int persis) {
 
 	return buf;
 }
+/* }}} */
 
+/* {{{ +-- void zend_string_free (zend_string * buf)
+ */
 void zend_string_free (zend_string * buf) {
 	if ( buf == NULL )
 		return;
@@ -276,8 +307,15 @@ void zend_string_free (zend_string * buf) {
 
 	efree (buf);
 }
+/* }}} */
 #endif
 
+/* End of PHP 5 APIs }}} */
+
+/* end of internal APIs }}} */
+
+/* {{{ +-- PHP_FUNCTION (string) screwim_encrypt (string)
+ */
 PHP_FUNCTION (screwim_encrypt) {
 	zend_string * text;
 	zend_string * ndata;
@@ -343,7 +381,11 @@ PHP_FUNCTION (screwim_encrypt) {
 	RETVAL_STR (ndata);
 	zend_string_free (ndata);
 }
+/* end of PHP_FUNCTION (screwim_encrypt) }}} */
 
+/* {{{ +-- PHP_FUNCTION (string) screwim_decrypt (string, (optional) key, (optional) magickey_len)
+ * return strings
+ */
 PHP_FUNCTION (screwim_decrypt) {
 	zend_string * text;
 	zend_string * key = NULL;
@@ -425,7 +467,11 @@ PHP_FUNCTION (screwim_decrypt) {
 	RETVAL_STRINGL (newdata.buf, newdata.len);
 #endif
 	efree (newdata.buf);
-}
+} 
+/* end of PHP_FUNCTION(screwim_decrypt) }}} */
+
+/* {{{ +-- PHP Module resgistration
+ */
 
 zend_module_entry screwim_module_entry = {
 #if ZEND_MODULE_API_NO >= 20010901
@@ -481,6 +527,8 @@ PHP_MSHUTDOWN_FUNCTION(screwim)
 	zend_compile_file = org_compile_file;
 	return SUCCESS;
 }
+
+/* end of PHP Module registration }}} */
 
 /*
  * Local variables:

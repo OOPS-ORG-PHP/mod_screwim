@@ -39,24 +39,27 @@
 #include <zlib.h>
 #include <string.h>
 
+/* {{{ for no PHP Build environments
+ */
 #ifndef NO_PHP_MOD
-// for emalloc and erealloc
-#include "php.h"
+	// for emalloc and erealloc
+	#include "php.h"
 #else
-#define erealloc realloc
-#define emalloc malloc
-#define efree free
+	#define erealloc realloc
+	#define emalloc malloc
+	#define efree free
 
-#define php_error_docref(a,b,c,...) \
-	fprintf (stderr, c, __VA_ARGS__); exit (1)
+	#define php_error_docref(a,b,c,...) \
+		fprintf (stderr, c, __VA_ARGS__); exit (1)
 #endif
+/* }}} */
 
 #define OUTBUFSIZ  100000
 
 typedef uLong ULong; /* 32 bits or more */
 
-char * zcodecom (int mode, char * inbuf, ULong inbuf_len, ULong * resultbuf_len)
-{
+// {{{ +-- char * zcodecom (int mode, char * inbuf, ULong inbuf_len, ULong * resultbuf_len)
+char * zcodecom (int mode, char * inbuf, ULong inbuf_len, ULong * resultbuf_len) {
 	z_stream   z;
 	char       outbuf[OUTBUFSIZ];
 
@@ -187,16 +190,20 @@ char * zcodecom (int mode, char * inbuf, ULong inbuf_len, ULong * resultbuf_len)
 	resultbuf[z.total_out] = 0;
 
 	return resultbuf;
-}
+} // }}}
 
+// {{{ +-- char * zencode (char * inbuf, ULong inbuf_len, ULong * resultbuf_len)
 char * zencode (char * inbuf, ULong inbuf_len, ULong * resultbuf_len) {
 	return zcodecom (0, inbuf, inbuf_len, resultbuf_len);
-}
+} // }}}
 
+// {{{ +-- char * zdecode (char * inbuf, ULong inbuf_len, ULong * resultbuf_len)
 char * zdecode (char * inbuf, ULong inbuf_len, ULong * resultbuf_len) {
 	return zcodecom (1, inbuf, inbuf_len, resultbuf_len);
 }
+// }}}
 
+// {{{ +-- unsigned short revert_endian (size_t x)
 unsigned short revert_endian (size_t x) {
 	int a, b;
 
@@ -206,7 +213,9 @@ unsigned short revert_endian (size_t x) {
 
 	return a ^ b;
 }
+// }}}
 
+// {{{ +-- short * generate_key (char * p, int no)
 short * generate_key (char * p, int no) {
 	int     len = strlen (p);
 	int     i, j = 0;
@@ -236,6 +245,7 @@ short * generate_key (char * p, int no) {
 
 	return r;
 }
+// }}}
 
 /*
  * Local variables:

@@ -73,6 +73,7 @@ static struct option long_options[] = { // {{{
 }; // }}}
 #endif
 
+// {{{ +-- void usage (void)
 void usage (void) {
 	fprintf (
 		stderr,
@@ -88,7 +89,9 @@ void usage (void) {
 	);
 	exit (1);
 }
+// }}}
 
+// {{{ +-- int main (int argc, char ** argv)
 int main (int argc, char ** argv) {
 	FILE   * fp;
 	struct   stat stat_buf;
@@ -230,6 +233,7 @@ int main (int argc, char ** argv) {
 
 	return 0;
 }
+// }}}
 
 /*
  * Local variables:
