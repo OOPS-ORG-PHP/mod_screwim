@@ -66,7 +66,7 @@ Copyright (c) 2016 JoungKyun.Kim
 
 configure 시에, ***--enable-screwim-decrypt*** 옵션을 주면, 복호화 기능(***screwim_decrypt(), screwim_seed()***)이 추가 됩니다. 즉, <u>암호화된 PHP 파일을 복호화 할 수 있다</u>는 의미입니다.
 
-***--enab le-screwim-decrypt*** 옵션은 배포용으로 빌드를 할 경우에는 절대 추가하면 안됩니다!
+***--enable-screwim-decrypt*** 옵션은 배포용으로 빌드를 할 경우에는 절대 추가하면 안됩니다!
 
 ### 3. 설정
 다음 라인을 ***php 설정 파일(php.ini 등)***에 추가를 합니다.
