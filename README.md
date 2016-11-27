@@ -150,7 +150,7 @@ The follow command creates the script file enciphered by the name of ***script f
    [root@host ~]$
 ```
 
-### 4. Execution
+## Execution
 
 Add next line to php configuration file (php.ini and so on)
 
@@ -162,7 +162,7 @@ By default, decryption does not work, so the performance of regular PHP files is
 
 Here is how to use the screwim.enable option:
 
-#### 4.1. PHP configuration
+### 1. PHP configuration
 
 ```ini
 screwim.enable = 1
@@ -170,7 +170,7 @@ screwim.enable = 1
 
 It is not recommended because it causes performance degradation when processing unencrypted php scripts.
 
-#### 4.2. mod_php (Apache module) envionment
+### 2. mod_php (Apache module) envionment
 
 Use the <directory> block to make the decryptor work on the desired path.
 
@@ -180,7 +180,7 @@ Use the <directory> block to make the decryptor work on the desired path.
 </Directory>
 ```
 
-#### 4.3. PHP Cli environments
+### 3. PHP Cli environments
 
 use -d option.
 
@@ -188,7 +188,7 @@ use -d option.
 [root@host ~]$ php -d screwim.enable=1 encrypted.php
 ```
 
-#### 4.4. embeded php code (Recommand)
+### 4. embeded php code (Recommand)
 
 ```php
 <?php
