@@ -76,7 +76,10 @@ screwim.enable = 1
 ### 4. APIs
 
 * ***(string) screwim_encrypt (string)***  
-  암호화된 데이터를 생성 합니다. runtime 중, 암호화된 설정 파일을 생성하는 데 이용할 수 있습니다. 이 함수는 ***screwim.enable*** 옵션 여부의 영향을 받지 않습니다.
+ * PHP 실행 중에, data를 암호화 합니다.
+ * ***tools/screwim*** 명령어 대신 사용할 수 있습니다.
+ * 암호화된 설정 파일을 생성하는 데 이용할 수 있습니다.
+ * ***screwim.enable*** 옵션 여부의 영향을 받지 않습니다.
 
 ```php
   <?php
@@ -92,9 +95,22 @@ screwim.enable = 1
   ?>
 ```
 
+* ***(string) screwim_decrypt (string, (optional) key, (optional) magickey_len)***  
+ * PHP 실행 중에, 암호화된 data를 복호화 합니다.
+ * ***tools/screwim*** 명령어 대신 사용할 수 있습니다.
+ * CLI 모드가 아니거나 root 권한이 아닐 경우, E_ERROR 처리 됩니다.
+ * ***screwim.enable*** 옵션 여부의 영향을 받지 않습니다.
+
+```php
+  <?php
+  $config = file_get_contents ('./config/config.php');
+  echo screwim_decrypt ($config);
+  ?>
+```
+
+
 ## 암호화 도구
 
-The encription tool is located in ***mod_screwim/tools/***.
 암호화 도구는 소스코드의 ***tools*** 디렉토리에 있습니다.
 
 ### 1. 빌드

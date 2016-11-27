@@ -75,8 +75,10 @@ By default, decryption does not work, so the performance of regular PHP files is
 
 ### 4. APIs
 
-* ***(string) screwim_encrypt (string)***  
-  Support runtime encryption. This API is not affected by the ***screwim.enable*** option.
+* ***(string) screwim_encrypt (string)***
+ * Support runtime encryption.
+ * Can be used instead of ***tools/screwim*** command
+ * This API is not affected by the ***screwim.enable*** option.
 
 ```php
   <?php
@@ -91,6 +93,21 @@ By default, decryption does not work, so the performance of regular PHP files is
   file_put_contents ('./config/config.php', $data);
   ?>
 ```
+
+* ***(string) screwim_decrypt (string, (optional) key, (optional) magickey_len)***  
+ * Support runtime decryption.
+ * Can be used instead of ***tools/screwim*** command
+ * When call in an environment other than ***CLI mode***, ***E_ERROR*** occurs.
+ * When not running as ***root privileges***, ***E_ERROR*** occurs.
+ * This API is not affected by the ***screwim.enable*** option.
+
+```php
+  <?php
+  $config = file_get_contents ('./config/config.php');
+  echo screwim_decrypt ($config);
+  ?>
+```
+
 
 ## Encryption Tool
 

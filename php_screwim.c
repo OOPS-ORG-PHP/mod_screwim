@@ -39,6 +39,7 @@
 #include "php_ini.h"
 #include "ext/standard/file.h"
 #include "ext/standard/info.h"
+#include "SAPI.h"
 
 #include <stdio.h>
 #include <stdarg.h>
@@ -53,8 +54,14 @@ typedef unsigned long  ULong; /* 32 bits or more */
 
 ZEND_DECLARE_MODULE_GLOBALS(screwim)
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_screwim, 0, 0, 1)
+ZEND_BEGIN_ARG_INFO_EX(arginfo_screwim_encrypt, 0, 0, 1)
 	ZEND_ARG_INFO(0, string)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_screwim_decrypt, 0, 0, 1)
+	ZEND_ARG_INFO(0, string)
+	ZEND_ARG_INFO(0, key)
+	ZEND_ARG_INFO(0, heder_len)
 ZEND_END_ARG_INFO()
 
 /* {{{ screwim_functions[]
@@ -62,7 +69,8 @@ ZEND_END_ARG_INFO()
  * Every user visible function must have an entry in screwim_functions[].
  */
 const zend_function_entry screwim_functions[] = {
-	PHP_FE(screwim_encrypt, arginfo_screwim)
+	PHP_FE(screwim_encrypt, arginfo_screwim_encrypt)
+	PHP_FE(screwim_decrypt, arginfo_screwim_decrypt)
 	{NULL, NULL, NULL}
 };
 /* }}} */
@@ -86,7 +94,7 @@ SCREWData screwdata_init (void) {
 	return data;
 }
 
-SCREWData mcryptkey (void) {
+SCREWData mcryptkey (char * key) {
 	SCREWData sdata;
 	short * buf;
 	int i;
@@ -94,25 +102,33 @@ SCREWData mcryptkey (void) {
 		SCREWIM_ENC_DATA
 	};
 
-	sdata.len = sizeof (screwim_mycryptkey) / sizeof (short);
-	buf = (short *) emalloc (sizeof (screwim_mycryptkey));
+	if ( key != NULL && strlen (key) > 0 ) {
+		sdata.len = strlen (key) / 4;
+		if ( (strlen (key) % 4) != 0 )
+			sdata.len++;
 
-	for ( i=0; i<sdata.len; i++ )
-		buf[i] = screwim_mycryptkey[i];
+		buf = generate_key (key, sdata.len);
+	} else {
+		sdata.len = sizeof (screwim_mycryptkey) / sizeof (short);
+		buf = (short *) emalloc (sizeof (screwim_mycryptkey));
 
+		for ( i=0; i<sdata.len; i++ )
+			buf[i] = screwim_mycryptkey[i];
+
+	}
 	sdata.buf = (short *) buf;
 
 	return sdata;
 }
 
-SCREWData screwim_ext_buf (char * datap, ULong datalen) {
+SCREWData screwim_ext_buf (char * datap, ULong datalen, char * ukey) {
 	int         cryptkey_len;
 	SCREWData   sdata;
 	SCREWData   key;
 	int         i;
 	short     * keybuf;
 
-	key = mcryptkey ();
+	key = mcryptkey (ukey);
 	keybuf = (short *) key.buf;
 
 	for( i=0; i<datalen; i++ ) {
@@ -141,7 +157,7 @@ SCREWData screwim_ext_fopen (FILE * fp)
 	fread (datap, datalen, 1, fp);
 	fclose (fp);
 
-	sdata = screwim_ext_buf (datap, datalen);
+	sdata = screwim_ext_buf (datap, datalen, NULL);
 	efree (datap);
 
 	return sdata;
@@ -160,7 +176,7 @@ SCREWData screwim_ext_mmap (zend_file_handle * file_handle) {
 	memset (datap, 0, datalen);
 	memcpy (datap, nbuf, datalen);
 
-	sdata = screwim_ext_buf (datap, datalen);
+	sdata = screwim_ext_buf (datap, datalen, NULL);
 	efree (datap);
 
 	return sdata;
@@ -253,8 +269,10 @@ void zend_string_free (zend_string * buf) {
 	if ( buf == NULL )
 		return;
 
-	if ( buf->val != NULL )
+	if ( buf->val != NULL ) {
 		efree (buf->val);
+		buf->val = NULL;
+	}
 
 	efree (buf);
 }
@@ -272,29 +290,41 @@ PHP_FUNCTION (screwim_encrypt) {
 
 #if PHP_VERSION_ID < 60000
 	text = (zend_string *) emalloc (sizeof (zend_string));
+	ZSTR_VAL(text) = NULL;
+	ZSTR_LEN(text) = 0;
 	if ( zend_parse_parameters (ZEND_NUM_ARGS(), "s", &ZSTR_VAL(text), &ZSTR_LEN(text)) == FAILURE )
 #else
 	if ( zend_parse_parameters (ZEND_NUM_ARGS(), "S", &text) == FAILURE )
 #endif
 	{
+#if PHP_VERSION_ID < 60000
+		zend_string_free (text);
+#endif
 		return;
 	}
 
-	if ( ZSTR_LEN (text) == 0 )
+	if ( ZSTR_LEN (text) == 0 ) {
+#if PHP_VERSION_ID < 60000
+		zend_string_free (text);
+#endif
 		RETURN_NULL ();
+	}
 
 	if ( memcmp (ZSTR_VAL (text), SCREWIM, SCREWIM_LEN) == 0 ) {
 		php_error (E_WARNING, "given data already crypted");
-		RETURN_STR (text);
+		RETVAL_STR (text);
+#if PHP_VERSION_ID < 60000
+		efree (text);
+#endif
 	}
 
 	datap = zencode (ZSTR_VAL (text), ZSTR_LEN (text), (ULong *) &datalen);
 
 #if PHP_VERSION_ID < 60000
-	efree (text);
+	zend_string_free (text);
 #endif
 
-	key = mcryptkey ();
+	key = mcryptkey (NULL);
 	keybuf = (short *) key.buf;
 
 	for( i=0; i<datalen; i++ ) {
@@ -310,9 +340,91 @@ PHP_FUNCTION (screwim_encrypt) {
 	ZSTR_VAL(ndata)[datalen] = '\0';
 	efree (datap);
 
-	//RETURN_STR (ndata);
 	RETVAL_STR (ndata);
 	zend_string_free (ndata);
+}
+
+PHP_FUNCTION (screwim_decrypt) {
+	zend_string * text;
+	zend_string * key = NULL;
+	zend_long     header_len = -1;
+
+	SCREWData     newdata;
+	int           hlen = 0;
+	size_t        datalen = 0;
+	char        * datap;
+
+	// only execute on cli mode
+	if ( strcmp (sapi_module.name, "cli") != 0 )
+		php_error (E_ERROR, "screwim_decrypt api can only be executed in CLI mode");
+	else {
+		int uid = getuid ();
+		if ( uid != 0 ) {
+			php_error (E_ERROR, "screwim_decrypt api can only be executed by root privileges");
+		}
+	}
+
+#if PHP_VERSION_ID < 60000
+	text = (zend_string *) emalloc (sizeof (zend_string));
+	ZSTR_VAL(text) = NULL;
+	ZSTR_LEN(text) = 0;
+	key  = (zend_string *) emalloc (sizeof (zend_string));
+	ZSTR_VAL(key)  = NULL;
+	ZSTR_LEN(key)  = 0;
+
+	if ( zend_parse_parameters (ZEND_NUM_ARGS(), "s|sl", &ZSTR_VAL(text), &ZSTR_LEN(text), &ZSTR_VAL(key), &ZSTR_LEN(key), &header_len) == FAILURE )
+#else
+	if ( zend_parse_parameters (ZEND_NUM_ARGS(), "S|Sl", &text, &key, &header_len) == FAILURE )
+#endif
+	{
+#if PHP_VERSION_ID < 60000
+		zend_string_free (text);
+		zend_string_free (key);
+#endif
+		return;
+	}
+
+#if PHP_VERSION_ID < 60000
+	if ( ZEND_NUM_ARGS() == 1 ) {
+		zend_string_free (key);
+		key = NULL;
+	}
+#endif
+
+	if ( header_len < 0 ) {
+		if ( memcmp (ZSTR_VAL (text), SCREWIM, SCREWIM_LEN) != 0 ) {
+			php_error (E_WARNING, "no Crypted data");
+			RETVAL_STR (text);
+#if PHP_VERSION_ID < 60000
+			zend_string_free (text);
+			zend_string_free (key);
+#endif
+		}
+	}
+
+	hlen = (header_len < 0) ? SCREWIM_LEN : header_len;
+	datalen = ZSTR_LEN (text) - hlen;
+
+	datap = (char *) emalloc (datalen + 1);
+	memset (datap, 0, datalen + 1);
+	memcpy (datap, ZSTR_VAL (text) + hlen, datalen);
+
+	newdata = screwim_ext_buf (
+		datap, datalen, (key != NULL) ? ZSTR_VAL (key) : NULL
+	);
+
+#if PHP_VERSION_ID < 60000
+	zend_string_free (text);
+	zend_string_free (key);
+#endif
+	efree (datap);
+
+#if PHP_VERSION_ID < 60000
+	RETVAL_STRINGL (newdata.buf, newdata.len, 1);
+#else
+	RETVAL_STRINGL (newdata.buf, newdata.len);
+#endif
+	efree (newdata.buf);
 }
 
 zend_module_entry screwim_module_entry = {

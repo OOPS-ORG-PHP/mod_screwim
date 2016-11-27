@@ -37,8 +37,7 @@
 #define SCREWIM     "\tSCREWIM DATA\t"
 #define SCREWIM_LEN 14
 
-/*
- * If build PHP module
+/* If build PHP module {{{
  */
 #ifndef NO_PHP_MOD
 
@@ -50,6 +49,7 @@ PHP_MSHUTDOWN_FUNCTION (screwim);
 PHP_MINFO_FUNCTION (screwim);
 
 PHP_FUNCTION(screwim_encrypt);
+PHP_FUNCTION(screwim_decrypt);
 
 ZEND_BEGIN_MODULE_GLOBALS(screwim)
 	zend_bool enabled;
@@ -64,23 +64,26 @@ ZEND_END_MODULE_GLOBALS(screwim)
 # define SCREWIM_G(v) (screwim_globals.v)
 #endif
 
-#endif // end of build PHP module
-
-char * zdecode (char * inbuf, ULong inbuf_len, ULong * resultbuf_len);
-char * zencode (char * inbuf, ULong inbuf_len, ULong * resultbuf_len);
-
-// for <= PHP 5
+// for <= PHP 5 {{{
 #if PHP_VERSION_ID < 60000
 typedef struct _zend_string {
 	size_t   len;
 	char   * val;
 } zend_string;
+typedef long zend_long;
 
 #define ZSTR_VAL(zstr) (zstr)->val
 #define ZSTR_LEN(zstr) (zstr)->len
 #define RETURN_STR(str) RETURN_STRINGL(ZSTR_VAL(str),ZSTR_LEN(str),1)
 #define RETVAL_STR(str) RETVAL_STRINGL(ZSTR_VAL(str),ZSTR_LEN(str),1)
-#endif
+#endif // }}}
+
+#endif // }}} end of build PHP module
+
+char * zdecode (char * inbuf, ULong inbuf_len, ULong * resultbuf_len);
+char * zencode (char * inbuf, ULong inbuf_len, ULong * resultbuf_len);
+unsigned short revert_endian (size_t x);
+short * generate_key (char * p, int no);
 
 #endif
 

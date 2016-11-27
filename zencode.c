@@ -197,6 +197,46 @@ char * zdecode (char * inbuf, ULong inbuf_len, ULong * resultbuf_len) {
 	return zcodecom (1, inbuf, inbuf_len, resultbuf_len);
 }
 
+unsigned short revert_endian (size_t x) {
+	int a, b;
+
+	a = ((x & 0xff00) >> 8) & 0x000000ff;
+	b = (x & 0x00ff) << 8;
+	//printf ("\n#### %x - %x - %x\n", a, b, a ^ b);
+
+	return a ^ b;
+}
+
+short * generate_key (char * p, int no) {
+	int     len = strlen (p);
+	int     i, j = 0;
+	char    buf[5] = { 0, };
+	short * r;
+	char  * endptr;
+
+	r = (short *) emalloc (sizeof (short) * no);
+
+	for ( i=0; i<len; i+=4 ) {
+		int n = strlen (p + i);
+		memset (buf, '0', 4);
+
+		if ( n > 4 )
+			n = 4;
+		else if ( n < 2 )
+			break;
+		else if ( n == 3 )
+			n--;
+
+		strncpy (buf, p + i, n);
+
+		r[j] = (short) revert_endian (strtoul (buf, &endptr, 16));
+		//printf ("%s %d %d\n", buf, n, r[j]);
+		j++;
+	}
+
+	return r;
+}
+
 /*
  * Local variables:
  * tab-width: 4
