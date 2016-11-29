@@ -8,17 +8,19 @@ This extension is based from [PHP screw](http://www.pm9.com/newpm9/itbiz/php/php
 
 The differences from the original PHP-screw are as follows:
  1. Improved performance by processing in memory rather than creating temporary files during decoding.
+  1. Applied [Sungwook-Shin's improved patch](https://github.com/edp1096)
+  2. Improved performance by fixing duplicated file open (issue #4)
+  3. Fixed memory leaks.
  2. Improved performance by changing memory reallocation logic when encoding or decoding large files.
- 3. Improved performance by fixing duplicated file open (issue #4)
- 4. Only works if 'screwim.enable' option is on.
+ 3. Only works if 'screwim.enable' option is on.
   * Improved performance by don't check magic key under normal environment(regular php script).
   * See also [#3 add screwim.enable ini option issue](https://github.com/OOPS-ORG-PHP/mod_screwim/issues/3)
- 5. Fixed memory leaks.
- 6. Maybe thread safe.
- 7. Preventing problems that can be decompiled with [php_unscrew](https://github.com/dehydr8/php_unscrew)
- 8. support runtime encrypt function (***screwim_encrypt()***)
- 9. support runtime decrypt function (***screwim_decrypt(), screwim_seed()***)
- 10. And so on..
+ 4. Fixed memory leaks.
+ 5. Remove global variable. Maybe thread safe.
+ 6. Preventing problems that can be decompiled with [php_unscrew](https://github.com/dehydr8/php_unscrew)
+ 7. support runtime encrypt function (***screwim_encrypt()***)
+ 8. support runtime decrypt function (***screwim_decrypt(), screwim_seed()***)
+ 9. And so on..
 
 ## Description
 
