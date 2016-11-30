@@ -150,7 +150,7 @@ The encription tool is located in ***mod_screwim/tools/***.
 [root@host mod_screwim]$ cd tools
 [root@host tools]$ ./autogen.sh
 [root@host tools]$ ./configure --prefix=/usr
-[root@host tools]$ nmake
+[root@host tools]$ make
 [root@host tools]$ make install # Or copy the screwim file into an appropriate directory.
 [root@host tools]$ /usr/bin/screwim -h
 screwim 1.0.0 : encode or decode php file
