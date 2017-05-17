@@ -1,9 +1,9 @@
 PHP Screw Improved(ScrewIm) extension
 ==
 [![GitHub license](https://img.shields.io/badge/License-BSD%202--Clause-blue.svg)](https://raw.githubusercontent.com/OOPS-ORG-PHP/mod_screwim/master/LICENSE)
-[![GitHub last release](https://img.shields.io/github/release/OOPS-ORG-PHP/mod_execdir.svg)](https://github.com/OOPS-ORG-PHP/mod_execdir/releases)
-[![GitHub closed issues](https://img.shields.io/github/issues-closed-raw/OOPS-ORG-PHP/mod_execdir.svg)](https://github.com/OOPS-ORG-PHP/mod_execdir/issues?q=is%3Aissue+is%3Aclosed)
-[![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed-raw/OOPS-ORG-PHP/mod_execdir.svg)](https://github.com/OOPS-ORG-PHP/mod_execdir/pulls?q=is%3Apr+is%3Aclosed)
+[![GitHub last release](https://img.shields.io/github/release/OOPS-ORG-PHP/mod_screwim.svg)](https://github.com/OOPS-ORG-PHP/mod_screwim/releases)
+[![GitHub closed issues](https://img.shields.io/github/issues-closed-raw/OOPS-ORG-PHP/mod_screwim.svg)](https://github.com/OOPS-ORG-PHP/mod_screwim/issues?q=is%3Aissue+is%3Aclosed)
+[![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed-raw/OOPS-ORG-PHP/mod_screwim.svg)](https://github.com/OOPS-ORG-PHP/mod_screwim/pulls?q=is%3Apr+is%3Aclosed)
 
 ## Abstract
 
