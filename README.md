@@ -18,13 +18,13 @@ The differences from the original PHP-screw are as follows:
   3. Fixed memory leaks.
  2. Improved performance by changing memory reallocation logic when encoding or decoding large files.
  3. Only works if 'screwim.enable' option is on.
-  * Improved performance by don't check magic key under normal environment(regular php script).
-  * See also [#3 add screwim.enable ini option issue](https://github.com/OOPS-ORG-PHP/mod_screwim/issues/3)
+    * Improved performance by don't check magic key under normal environment(regular php script).
+    * See also [#3 add screwim.enable ini option issue](https://github.com/OOPS-ORG-PHP/mod_screwim/issues/3)
  4. Fixed memory leaks.
  5. Remove global variable. Maybe thread safe.
  6. Preventing problems that can be decompiled with [php_unscrew](https://github.com/dehydr8/php_unscrew)
- 7. support runtime encrypt function (***screwim_encrypt()***)
- 8. support runtime decrypt function (***screwim_decrypt(), screwim_seed()***)
+ 7. support runtime encrypt function ( ___screwim_encrypt()___ )
+ 8. support runtime decrypt function ( ___screwim_decrypt(), screwim_seed()___ )
  9. And so on..
 
 ## Description
