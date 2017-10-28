@@ -13,13 +13,13 @@ PHP Screw Improved(ScrewIm) 확장 모듈
 
 원 PHP-screw와의 차이점은 다음과 같습니다:
  1. 복호화시에 복호화 된 소스를 tmpfile로 생성하던 로직을 memstream을 이용하도록 변경하여 성능을 개선.
-  1. [신성욱님 개선 사항](http://enjoytools.net/xe/board_nfRq49/2018) 반영
-  2. 원 코드에서 복호화를 할 때, include/require 를 처리할 경우에 해당 스크립트를 2번 open하는 문제를 수정하여 성능 개선.
-  3. 메모리 누수 수정
+    1. [신성욱님 개선 사항](http://enjoytools.net/xe/board_nfRq49/2018) 반영
+    2. 원 코드에서 복호화를 할 때, include/require 를 처리할 경우에 해당 스크립트를 2번 open하는 문제를 수정하여 성능 개선.
+    3. 메모리 누수 수정
  2. 큰 파일을 암호화 또는 복호화를 할 때 memory 재할당 로직을 변경하여 성능을 개선.
  3. 'screawim.enable' 옵션이 활성화 되었을 경우에만 동작하도록 개선
-  * 일반적인 상황에서는 암호화된 파일 보다는 정상적인 파일을 다루는 경우가 많으므로, 이 경우를 위하여 동작 여부를 옵션으로 처리하여 성능 개선.
-  * [#3 add screwim.enable ini option issue](https://github.com/OOPS-ORG-PHP/mod_screwim/issues/3) 참조
+    * 일반적인 상황에서는 암호화된 파일 보다는 정상적인 파일을 다루는 경우가 많으므로, 이 경우를 위하여 동작 여부를 옵션으로 처리하여 성능 개선.
+    * [#3 add screwim.enable ini option issue](https://github.com/OOPS-ORG-PHP/mod_screwim/issues/3) 참조
  4. 전역 변수 제거. 아마도 thread safe 할 것으로 예상 ??
  5. [php_unscrew](https://github.com/dehydr8/php_unscrew)로 decompile 가능한 문제를 좀 더 어렵게 수정
  6. runtime encrypt 함수 지원 ```screwim_encrypt()```
