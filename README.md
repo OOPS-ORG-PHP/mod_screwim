@@ -158,7 +158,7 @@ The encription tool is located in ***mod_screwim/tools/***.
 [root@host tools]$ make
 [root@host tools]$ make install # Or copy the screwim file into an appropriate directory.
 [root@host tools]$ /usr/bin/screwim -h
-screwim 1.0.0 : encode or decode php file
+screwim 1.0.1 : encode or decode php file
 Usage: screwim [OPTION] PHP_FILE
    -c VAL, --convert=VAL convert key byte to digits
    -d,     --decode   decrypt encrypted php script

@@ -2,7 +2,7 @@
 # Configure template for screwim
 
 AC_PREREQ(2.63)
-AC_INIT([screwim], [1.0.0], [https://github.com/OOPS-ORG-PHP/mod_screwim])
+AC_INIT([screwim], [1.0.1], [https://github.com/OOPS-ORG-PHP/mod_screwim])
 
 #AC_CONFIG_AUX_DIR([build])
 AM_INIT_AUTOMAKE([-Wall -Werror -Wno-override foreign no-dependencies])
