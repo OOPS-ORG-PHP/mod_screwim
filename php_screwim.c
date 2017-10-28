@@ -532,8 +532,8 @@ PHP_FUNCTION (screwim_seed) {
 		RETURN_NULL ();
 	}
 
-	add_property_string (return_value, "keybyte", keybyte);
-	add_property_string (return_value, "keystr", keystr);
+	screwim_add_property_string (return_value, "keybyte", keybyte);
+	screwim_add_property_string (return_value, "keystr", keystr);
 	add_property_long (return_value, "headerlen", SCREWIM_LEN);
 	efree (keybyte);
 	efree (keystr);

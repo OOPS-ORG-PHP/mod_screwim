@@ -80,8 +80,10 @@ ZEND_END_MODULE_GLOBALS(screwim)
 	#define RETURN_STR(str) RETURN_STRINGL(ZSTR_VAL(str),ZSTR_LEN(str),1)
 	#define RETVAL_STR(str) RETVAL_STRINGL(ZSTR_VAL(str),ZSTR_LEN(str),1)
 	#define RETVAL_SCREWDATA(z) RETVAL_STRINGL(z.buf, z.len, 1)
+	#define screwim_add_property_string(rvalue, str, strlength) add_property_string(rvalue, str, strlength, 1)
 #else
 	#define RETVAL_SCREWDATA(z) RETVAL_STRINGL(z.buf, z.len)
+	#define screwim_add_property_string add_property_string
 #endif // }}}
 
 #endif // }}} end of build PHP module
