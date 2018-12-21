@@ -62,7 +62,10 @@ Copyright (c) 2016 JoungKyun.Kim
   * ~~The encryption will be harder to break, if you add more values to the encryption SEED array.~~
   * ~~However, the size of the SEED is unrelated to the time of the decrypt processing.~~
   * The encryption SEED key is now automatically generated from 5 to 8 arrays at configure time. Don't use ***my_screw.h*** any more. (craeted with the ***SCREWIM_ENC_DATA*** constant in config.h)
-  * (***Optional***) Encrypted scripts get a stamp added to the beginning of the file. If you like, you may change this stamp defined by ***SCREWIM*** and ***SCREWIM_LEN*** in ***php_screwim.h***. ***SCREWIM_LEN*** must be less than or equal to the size of ***SCREWIM***.
+  * Encrypted scripts get a stamp added to the beginning of the file. Before building, you must change this stamp defined by ***SCREWIM*** and ***SCREWIM_LEN*** in ***php_screwim.h***. ***SCREWIM_LEN*** must be less than or equal to the size of ***SCREWIM***.
+    * In November 2017, [a php extension](https://github.com/jc-lab/php_screwhook) has been introduced that hooks up the ___zend_compile_file___ API before ___mod_screwim___ to take an encrypted file. To prevent this module, the values of ___SCREWIM___ and ___SCREWIM_LEN___ must be changed, and longer is better.
+    * No matter how long you change to a string, you can not defend 100% in mod_screwim logic. It is not suitable for encrypted code distribution.
+    * If you change the Magic key, it is not compatible with existing encrypted files. New encryption is required.
 
 ### 2. Build and install  
   ```bash
@@ -70,7 +73,7 @@ Copyright (c) 2016 JoungKyun.Kim
   [root@host mod_screwim]$ ./configure
   [root@host mod_screwim]$ make install
   ```
-On configure, the ***--enable-screwim-decrypt*** option adds decrypt functions(***screwim_decrypt(), screwim_seed()***). This means that ***you can decrypt an encrypted PHP file***.
+On configure, the ***--enable-screwim-decrypt*** option adds decrypt functions ( ***screwim_decrypt(), screwim_seed()*** ). This means that ***you can decrypt an encrypted PHP file***.
 
 If you are building ***for distribution***, never add the --enable-screwim-decrypt option!
 
@@ -147,7 +150,7 @@ For detail on the settings, refer to the ***Execution*** item below.
 
 ## Command line Encryption Tool
 
-The encription tool is located in ***mod_screwim/tools/***.
+The encription tool is located in ***mod_screwim/tools/*** .
 
 ### 1. Build
 
