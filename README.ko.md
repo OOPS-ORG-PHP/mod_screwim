@@ -57,11 +57,14 @@ Copyright (c) 2016 JoungKyun.Kim
 ## 설치
 
 ### 1. 암호화 복호화 사용자 정의
-  * ~~***my_screw.h***의 암호화 SEED키(```screwim_mcryptkey```)를 원하는 값으로 변경을 합니다.~~
+  * ~~***my_screw.h*** 의 암호화 SEED키(```screwim_mcryptkey```)를 원하는 값으로 변경을 합니다.~~
   * ~~암호화 SEED 배열의 크기를 늘리면 암호화 강도를 더 높일 수 있습니다.~~
   * ~~암호화 SEED 배열의 크기는 복고화 처리 시간에 영향을 주지 않습니다.~~
   * 이제 ***configure*** 시에 암호화 SEED키는 5~8개의 배열로 자동 생성이 됩니다. 더이상 ***my_screw.h*** 를 사용하지 않습니다. (config.h의 ***SCREWIM_ENC_DATA*** 상수로 생성이 됩니다.)
-  * (***부가적으로***) 암호화된 스크립트는 파일의 처음 부분에 Magic key를 추가 합니다. 이 magic key를 변경하고 싶을 경우, ***php_screwim.h*** 에서 ***SCREWIM*** 과 ***SCREWIM_LEN*** 의 값을 변경하면 됩니다. ***SCREWIM_LEN*** 값은 ***SCREWIM*** 에 지정된 문자열의 길이와 같거나 작아야 합니다.
+  * 암호화된 스크립트는 파일의 처음 부분에 Magic key를 추가 합니다. 빌드를 하기 전, 이 magic key를 꼭 변경 하여야 합니다. ***php_screwim.h*** 에서 ***SCREWIM*** 과 ***SCREWIM_LEN*** 의 값을 변경하면 됩니다. ***SCREWIM_LEN*** 값은 ***SCREWIM*** 에 지정된 문자열의 길이와 같거나 작아야 합니다.
+    * 2017.11 zend_compile_file API를 mod_screwim 보다 먼저 hooking 하여 암호화된 파일을 탈취하는 [php extension](https://github.com/jc-lab/php_screwhook) 이 나왔습니다. 이 모듈을 방지 하기 위하여, ***SCREWIM*** 과 ***SCREWIM_LEN*** 의 값은 반드시 변경이 되어야 하며, 길면 길수록 좋습니다.
+    * 아무리 길게 변경을 하더라도 mod_screwim 이 사용하는 logic 상 100% 탈취를 막을 수는 없습니다. 암호화된 코드 배포용으로는 적합하지 않습니다.
+    * Magic key를 변경할 경우, 기존의 암호화 되어진 파일과는 호환이 되지 않습니다. 새로 암호화를 하여야 합니다.
 
 ### 2. 빌드 및 설치
   ```bash
