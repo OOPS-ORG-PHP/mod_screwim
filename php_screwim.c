@@ -143,7 +143,6 @@ SCREWData mcryptkey (char * key) {
 /* {{{ +-- SCREWData screwim_ext_buf (char * datap, ULong datalen, char * ukey)
  */
 SCREWData screwim_ext_buf (char * datap, ULong datalen, char * ukey) {
-	int         cryptkey_len;
 	SCREWData   sdata;
 	SCREWData   key;
 	int         i;
