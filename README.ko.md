@@ -176,7 +176,7 @@ screwim.enable = 1
 [root@host tools]$ make
 [root@host tools]$ make install # 또는 원하는 위치에 screwim 파일을 복사 하십시오.
 [root@host tools]$ /usr/bin/screwim -h
-screwim 1.0.1 : encode or decode php file
+screwim 1.0.2 : encode or decode php file
 Usage: screwim [OPTION] PHP_FILE
    -c VAL, --convert=VAL convert key byte to digits
    -d,     --decode   decrypt encrypted php script
