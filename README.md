@@ -7,9 +7,9 @@ PHP Screw Improved(ScrewIm) extension
 
 ## Abstract
 
-***PHP Screw Imporved(ScrewIm)*** is a PHP script encryption tool. When you are developing a commercial package using PHP, the script can be distributed as encrypted up until just before execution. This preserves your intellectual property.
+___PHP Screw Imporved(ScrewIm)___ is a PHP script encryption tool. When you are developing a commercial package using PHP, the script can be distributed as encrypted up until just before execution. This preserves your intellectual property.
 
-This extension is based from [PHP screw](http://www.pm9.com/newpm9/itbiz/php/phpscrew/) who made by [***Kunimasa Noda***](mailto:kuni@pm9.com) in [PM9.com, Inc.](http://www.pm9.com)
+This extension is based from [PHP screw](http://www.pm9.com/newpm9/itbiz/php/phpscrew/) who made by [___Kunimasa Noda___](mailto:kuni@pm9.com) in [PM9.com, Inc.](http://www.pm9.com)
 
 The differences from the original PHP-screw are as follows:
  1. Improved performance by processing in memory rather than creating temporary files during decoding.
@@ -29,7 +29,7 @@ The differences from the original PHP-screw are as follows:
 
 ## Description
 
-***ScrewIm*** is encipher a PHP script with the encryption tool.
+___ScrewIm___ is encipher a PHP script with the encryption tool.
 
 And, at the time of execution of a PHP script, the decryptor screwim.so is executed as PHP-Extension, just before the PHP script is handed to the Zend-Compiler.
 
@@ -47,8 +47,8 @@ Copyright (c) 2016 JoungKyun.Kim
 
 ## Requirement
 
-* ***PHP 5*** and after (Also support ***PHP 7***)
-* PHP ***zlib*** extension.  
+* ___PHP 5___ and after (Also support ___PHP 7___)
+* PHP ___zlib___ extension.  
   Check that PHP has zlib compiled in it with the PHP script:
 ```php
     <?php gzopen(); ?>
@@ -58,14 +58,15 @@ Copyright (c) 2016 JoungKyun.Kim
 ## Installation
 
 ### 1. Customize encrytion / decryption  
-  * ~~change the encryption SEED key (***screwim_mcryptkey***) in ***my_screw.h*** into the values according to what you like.~~
+  * ~~change the encryption SEED key (___screwim_mcryptkey___) in ___my_screw.h___ into the values according to what you like.~~
   * ~~The encryption will be harder to break, if you add more values to the encryption SEED array.~~
   * ~~However, the size of the SEED is unrelated to the time of the decrypt processing.~~
-  * The encryption SEED key is now automatically generated from 5 to 8 arrays at configure time. Don't use ***my_screw.h*** any more. (craeted with the ***SCREWIM_ENC_DATA*** constant in config.h)
-  * Encrypted scripts get a stamp added to the beginning of the file. Before building, you must change this stamp defined by ***SCREWIM*** and ***SCREWIM_LEN*** in ***php_screwim.h***. ***SCREWIM_LEN*** must be less than or equal to the size of ***SCREWIM***.
+  * The encryption SEED key is now automatically generated from 5 to 8 arrays at configure time. Don't use ___my_screw.h___ any more. (craeted with the ___SCREWIM_ENC_DATA___ constant in config.h)
+  * Encrypted scripts get a stamp added to the beginning of the file. Before building, you must change this stamp defined by ___SCREWIM___ and ___SCREWIM_LEN___ in ___php_screwim.h___. ___SCREWIM_LEN___ must be less than or equal to the size of ___SCREWIM___.
     * In November 2017, [a php extension](https://github.com/jc-lab/php_screwhook) has been introduced that hooks up the ___zend_compile_file___ API before ___mod_screwim___ to take an encrypted file. To prevent this module, the values of ___SCREWIM___ and ___SCREWIM_LEN___ must be changed, and longer is better.
     * No matter how long you change to a string, you can not defend 100% in mod_screwim logic. It is not suitable for encrypted code distribution.
     * If you change the Magic key, it is not compatible with existing encrypted files. New encryption is required.
+
 
 ### 2. Build and install  
   ```bash
@@ -73,12 +74,26 @@ Copyright (c) 2016 JoungKyun.Kim
   [root@host mod_screwim]$ ./configure
   [root@host mod_screwim]$ make install
   ```
-On configure, the ***--enable-screwim-decrypt*** option adds decrypt functions ( ***screwim_decrypt(), screwim_seed()*** ). This means that ***you can decrypt an encrypted PHP file***.
+On configure, the ___--enable-screwim-decrypt___ option adds decrypt functions ( ___screwim_decrypt(), screwim_seed()___ ). This means that ___you can decrypt an encrypted PHP file___.
 
-If you are building ***for distribution***, never add the --enable-screwim-decrypt option!
+If you are building ___for distribution___, never add the --enable-screwim-decrypt option!
 
 
-### 3. Configuration
+### 3. Test
+
+PHP can test to see if the built module works.
+
+```bash
+[root@host mod_screwim]$ make test PHP_EXECUTABLE=/usr/bin/php
+```
+
+Or, if you want to test the extension you built before installing, you can do the following:
+
+```bash
+[root@host mod_screwim]$ php -d "extension_dir=./modules/" -d "extension=screwim.so" some.php
+```
+
+### 4. Configuration
 Add next line to php configuration file (php.ini and so on)
 
 ```ini
@@ -88,14 +103,15 @@ screwim.enable = 1
 
 By default, decryption does not work, so the performance of regular PHP files is better than the original PHP Screw. The screwim.enable option must be turned on for decryption to work. See also https://github.com/OOPS-ORG-PHP/mod_screwim/issues/3
 
-For detail on the settings, refer to the ***Execution*** item below.
+For detail on the settings, refer to the ___Execution___ item below.
 
-### 4. APIs
 
-* ***(string) screwim_encrypt (string)***
- * Support runtime encryption.
- * Can be used instead of ***tools/screwim*** command
- * This API is not affected by the ***screwim.enable*** option.
+### 5. APIs
+
+* ___(string) screwim_encrypt (string)___
+  * Support runtime encryption.
+  * Can be used instead of ___tools/screwim___ command
+  * This API is not affected by the ___screwim.enable___ option.
 
 ```php
   <?php
@@ -111,13 +127,13 @@ For detail on the settings, refer to the ***Execution*** item below.
   ?>
 ```
 
-* ***(string) screwim_decrypt (string, (optional) key, (optional) magickey_len)***  
- * The ***--enable-screwim-decrypt*** option must be given at build time.
- * Support runtime decryption.
- * Can be used instead of ***tools/screwim*** command
- * When call in an environment other than ***CLI mode***, ***E_ERROR*** occurs.
- * When not running as ***root privileges***, ***E_ERROR*** occurs.
- * This API is not affected by the ***screwim.enable*** option.
+* ___(string) screwim_decrypt (string, (optional) key, (optional) magickey_len)___  
+  * The ___--enable-screwim-decrypt___ option must be given at build time.
+  * Support runtime decryption.
+  * Can be used instead of ___tools/screwim___ command
+  * When call in an environment other than ___CLI mode___, ___E_ERROR___ occurs.
+  * When not running as ___root privileges___, ___E_ERROR___ occurs.
+  * This API is not affected by the ___screwim.enable___ option.
 
 ```php
   <?php
@@ -126,13 +142,13 @@ For detail on the settings, refer to the ***Execution*** item below.
   ?>
 ```
 
-* ***(object) screwim_seed (void)***
- * The ***--enable-screwim-decrypt*** option must be given at build time.
- * Returns ***encrypt seed key*** of current ***mod_screwim.so***
- * Can be used instead of ***tools/screwim*** command
- * When call in an environment other than ***CLI mode***, ***E_ERROR*** occurs.
- * When not running as ***root privileges***, ***E_ERROR*** occurs.
- * This API is not affected by the ***screwim.enable*** option.
+* ___(object) screwim_seed (void)___
+  * The ___--enable-screwim-decrypt___ option must be given at build time.
+  * Returns ___encrypt seed key___ of current ___mod_screwim.so___
+  * Can be used instead of ___tools/screwim___ command
+  * When call in an environment other than ___CLI mode___, ___E_ERROR___ occurs.
+  * When not running as ___root privileges___, ___E_ERROR___ occurs.
+  * This API is not affected by the ___screwim.enable___ option.
 
 ```php
   <?php
@@ -150,7 +166,7 @@ For detail on the settings, refer to the ***Execution*** item below.
 
 ## Command line Encryption Tool
 
-The encription tool is located in ***mod_screwim/tools/*** .
+The encription tool is located in ___mod_screwim/tools/___ .
 
 ### 1. Build
 
@@ -174,7 +190,7 @@ Usage: screwim [OPTION] PHP_FILE
 
 ### 2. Encryptioin
 
-The follow command creates the script file enciphered by the name of ***script file name .screw***.
+The follow command creates the script file enciphered by the name of ___script file name .screw___.
 ```
    [root@host ~]$ /usr/bin/screwim test.php
    Success Crypting(test.php.screw)
@@ -183,7 +199,7 @@ The follow command creates the script file enciphered by the name of ***script f
 
 ### 3. Decryption
 
-The follow command creates the script file enciphered by the name of ***script file name .discrew***.
+The follow command creates the script file enciphered by the name of ___script file name .discrew___.
 ```
    [root@host ~]$ /usr/bin/screwim -d test.php.screw
    Success Decrypting(test.php.screw.discrew)
@@ -207,9 +223,9 @@ The decryption process is as follows:
 
 Obviously encryption and decryption will degrade performance. Therefore, it is recommended to reduce the number of encrypted documents as much as possible. However, even if you do not encrypt it, opening all files to check for encryption also causes performance degradation. In particular, a large number of connections can cause serious performance degradation.
 
-To solve this problem, ***mod_screwim*** will return to the Zend compiler without checking the Magic key if the screwim.enable option is not enabled.
+To solve this problem, ___mod_screwim___ will return to the Zend compiler without checking the Magic key if the screwim.enable option is not enabled.
 
-***Therefore, it is best to minimize the encryption as much as possible, and it is recommended to include it in php after encrypting only certain functions***.
+___Therefore, it is best to minimize the encryption as much as possible, and it is recommended to include it in php after encrypting only certain functions___.
 
 Here is how to use the screwim.enable option:
 
@@ -219,7 +235,7 @@ Here is how to use the screwim.enable option:
 screwim.enable = 1
 ```
 
-Add the above settings to the PHP configuration file(***php.ini*** and so on). It is not recommended because it causes ***performance degradation*** when processing unencrypted php scripts.
+Add the above settings to the PHP configuration file(___php.ini___ and so on). It is not recommended because it causes ___performance degradation___ when processing unencrypted php scripts.
 
 Use this setting if there are not many connections or if there is sufficient resources.
 
