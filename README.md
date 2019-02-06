@@ -6,6 +6,10 @@ PHP Screw Improved(ScrewIm) extension
 [![GitHub closed issues](https://img.shields.io/github/issues-closed-raw/OOPS-ORG-PHP/mod_screwim.svg)](https://github.com/OOPS-ORG-PHP/mod_screwim/issues?q=is%3Aissue+is%3Aclosed)
 [![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed-raw/OOPS-ORG-PHP/mod_screwim.svg)](https://github.com/OOPS-ORG-PHP/mod_screwim/pulls?q=is%3Apr+is%3Aclosed)
 
+## Information
+
+If you can read korean, see also [README.ko.md](README.ko.md)
+
 ## Abstract
 
 ___PHP Screw Imporved(ScrewIm)___ is a PHP script encryption tool. When you are developing a commercial package using PHP, the script can be distributed as encrypted up until just before execution. This preserves your intellectual property.
