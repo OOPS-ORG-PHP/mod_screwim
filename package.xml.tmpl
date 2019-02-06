@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package packagerversion="1.10.6" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
+	<name>screwim</name>
+	<channel>pecl.php.net</channel>
+	<summary>screwim - PHP Screw Improved</summary>
+	<description>
+		PHP Screw Imporved(ScrewIm) is a PHP script encryption tool. When you are developing a commercial package using PHP, the script can be distributed as encrypted up until just before execution. This preserves your intellectual property.
+
+		This extension is based from PHP screw who made by Kunimasa Noda in PM9.com, Inc.
+		See also, https://github.com/OOPS-ORG-PHP/mod_screwim/
+	</description>
+	<lead>
+		<name>JoungKyun.Kim</name>
+		<user>joungkyun</user>
+		<email>joungkyun@daum.net</email>
+		<active>yes</active>
+	</lead>
+	<date>@curdate@</date>
+	<time>@curtime@</time>
+	<version>
+		<release>1.0.2</release>
+		<api>1.0.0</api>
+	</version>
+	<stability>
+		<release>stable</release>
+		<api>stable</api>
+	</stability>
+	<license uri="http://www.php.net/license">PHP</license>
+	<notes>
+	</notes>
+	<contents>
+		<dir name="/">
+			<file md5sum="@LICENSE@" name="LICENSE" role="doc" />
+			<file md5sum="@README.md@" name="README.md" role="doc" />
+			<file md5sum="@README.ko.md@" name="README.ko.md" role="doc" />
+			<file md5sum="@config.m4@" name="config.m4" role="src" />
+			<file md5sum="@php_screwim.c@" name="php_screwim.c" role="src" />
+			<file md5sum="@php_screwim.h@" name="php_screwim.h" role="src" />
+			<file md5sum="@screwim.ini@" name="screwim.ini" role="doc" />
+			<file md5sum="@zencode.c@" name="zencode.c" role="src" />
+			<dir name="tests">
+				<file md5sum="@tests/001.phpt@" name="001.phpt" role="test" />
+			</dir>
+			<dir name="tools">
+				<file md5sum="@tools/Makefile.am@" name="Makefile.am" role="src" />
+				<file md5sum="@tools/Makefile.in@" name="Makefile.in" role="src" />
+				<file md5sum="@tools/configure.ac@" name="configure.ac" role="src" />
+				<file md5sum="@tools/php_screwim.h@" name="php_screwim.h" role="src" />
+				<file md5sum="@tools/screw.c@" name="screw.c" role="src" />
+				<file md5sum="@tools/zencode.c@" name="zencode.c" role="src" />
+			</dir>
+		</dir> <!-- / -->
+	</contents>
+	<dependencies>
+		<required>
+			<php>
+				<min>5.0.0</min>
+			</php>
+			<pearinstaller>
+				<min>1.4.3</min>
+			</pearinstaller>
+		</required>
+	</dependencies>
+	<providesextension>screwim</providesextension>
+	<extsrcrelease />
+	<changelog>
+		<release>
+			<stability><release>stable</release><api>stable</api></stability>
+			<version><release>1.0.2</release><api>1.0.0</api></version>
+			<date>@curdate@</date>
+			<notes>
+			</notes>
+		</release>
+		<release>
+			<stability><release>stable</release><api>stable</api></stability>
+			<version><release>1.0.1</release><api>1.0.0</api></version>
+			<date>2017-10-29</date>
+			<notes>
+				- fixed #5 fixed compile error "add_property_string requires 4 arguments" on PHP 5.x
+			</notes>
+		</release>
+		<release>
+			<stability><release>stable</release><api>stable</api></stability>
+			<version><release>1.0.0</release><api>1.0.0</api></version>
+			<date>2016-11-28</date>
+			<notes>
+				- Initial release based on PHP screw v1.5.
+				- Improved performance by processing in memory rather than creating temporary files during decoding.
+				- Improved performance by changing memory reallocation logic when encoding or decoding large files.
+				- Only works if 'screwim.enable' option is on.
+				- Improved performance by don't check magic key under normal environment(regular php script). (issue #3)
+				- Remove global variables. Maybe thread safe.
+				- Preventing problems that can be decompiled with php_unscrew
+				- support runtime encrypt function (screwim_encrypt())
+				- support runtime decrypt function (screwim_decrypt(), screwim_seed())
+				- And so on..
+			</notes>
+		</release>
+	</changelog>
+</package>
