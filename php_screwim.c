@@ -186,6 +186,7 @@ SCREWData screwim_ext_fopen (FILE * fp) {
 }
 /* }}} */
 
+#if PHP_VERSION_ID < 70400
 /* {{{ +-- SCREWData screwim_ext_mmap (zend_file_handle * file_handle)
  */
 SCREWData screwim_ext_mmap (zend_file_handle * file_handle) {
@@ -207,6 +208,7 @@ SCREWData screwim_ext_mmap (zend_file_handle * file_handle) {
 	return sdata;
 }
 /* }}} */
+#endif
 
 ZEND_API zend_op_array *(*org_compile_file)(zend_file_handle * file_handle, int type TSRMLS_DC);
 
@@ -221,6 +223,7 @@ ZEND_API zend_op_array * screwim_compile_file (zend_file_handle * file_handle, i
 	if ( ! SCREWIM_G (enabled) )
 		return org_compile_file (file_handle, type TSRMLS_CC);
 
+#if PHP_VERSION_ID < 70400
 	// If file_handle->type is ZEND_HANDLE_MAPPED, handle.stream.mmap.buf has already
 	// contents data. This case is include or require. when file is directly opened,
 	// handle.stream.mmap.buf has NULL.
@@ -232,6 +235,7 @@ ZEND_API zend_op_array * screwim_compile_file (zend_file_handle * file_handle, i
 		} else
 			return org_compile_file (file_handle, type TSRMLS_CC);
 	}
+#endif
 
 	if ( zend_is_executing (TSRMLS_C) ) {
 		if ( get_active_function_name (TSRMLS_C) ) {
@@ -244,9 +248,11 @@ ZEND_API zend_op_array * screwim_compile_file (zend_file_handle * file_handle, i
 		}
 	}
 
+#if PHP_VERSION_ID < 70400
 	if ( file_handle->type == ZEND_HANDLE_MAPPED ) {
 		sdata = screwim_ext_mmap (file_handle);
 	} else {
+#endif
 		// When file is opened directly (type is ZEND_HANDLE_FP), check here.
 
 		fp = fopen (file_handle->filename, "rb");
@@ -254,7 +260,7 @@ ZEND_API zend_op_array * screwim_compile_file (zend_file_handle * file_handle, i
 			return org_compile_file (file_handle, type TSRMLS_CC);
 		}
 
-		fread (buf, SCREWIM_LEN, 1, fp);
+		fread (buf, sizeof (char), SCREWIM_LEN, fp);
 
 		if ( memcmp (buf, SCREWIM, SCREWIM_LEN) != 0 ) {
 			fclose (fp);
@@ -262,7 +268,9 @@ ZEND_API zend_op_array * screwim_compile_file (zend_file_handle * file_handle, i
 		}
 
 		sdata = screwim_ext_fopen (fp);
+#if PHP_VERSION_ID < 70400
 	}
+#endif
 
 	tmp = screwdata_init ();
 
@@ -272,8 +280,13 @@ ZEND_API zend_op_array * screwim_compile_file (zend_file_handle * file_handle, i
 	if ( zend_stream_fixup (file_handle, (char **) &tmp.buf, &tmp.len TSRMLS_CC) == FAILURE )
 		return NULL;
 
+#if PHP_VERSION_ID < 70400
 	file_handle->handle.stream.mmap.buf = sdata.buf;
 	file_handle->handle.stream.mmap.len = sdata.len;
+#else
+	file_handle->buf = sdata.buf;
+	file_handle->len = sdata.len;
+#endif
 	file_handle->handle.stream.closer = NULL;
 
 	return org_compile_file (file_handle, type TSRMLS_CC);
