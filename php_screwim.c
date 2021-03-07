@@ -55,7 +55,32 @@ typedef unsigned long  ULong; /* 32 bits or more */
 ZEND_DECLARE_MODULE_GLOBALS(screwim)
 
 /* {{{ php function argument info
+ * proto types
+ * ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(name, return_reference, required_num_args, type, allow_null)
+ * ZEND_BEGIN_ARG_INFO_EX(name, _unused, return_reference, required_num_args)
+ * ZEND_ARG_INFO(pass_by_ref, name)
+ * ZEND_ARG_TYPE_INFO(pass_by_ref, name, type_hint, allow_null)
+ * ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(pass_by_ref, name, type_hint, allow_null, default_value)
  */
+#if PHP_VERSION_ID > 70199
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_screwim_encrypt, 0, 1, IS_STRING, 1)
+	ZEND_ARG_TYPE_INFO(0, string, IS_STRING, 1)
+ZEND_END_ARG_INFO()
+#ifdef SCREWIM_DECRYPT
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_screwim_decrypt, 0, 1, IS_STRING, 1)
+	ZEND_ARG_TYPE_INFO(0, string, IS_STRING, 1)
+#if PHP_VERSION_ID > 79999
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, key, IS_STRING, 1, "null")
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, header_len, IS_LONG, 0, "-1")
+#else
+	ZEND_ARG_TYPE_INFO(0, key, IS_STRING, 1)
+	ZEND_ARG_TYPE_INFO(0, header_len, IS_LONG, 0)
+#endif
+ZEND_END_ARG_INFO()
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_screwim_seed, 0, 0, IS_OBJECT, 0)
+ZEND_END_ARG_INFO()
+#endif /* end of SCREWIM_DECRYPT */
+#else
 ZEND_BEGIN_ARG_INFO_EX(arginfo_screwim_encrypt, 0, 0, 1)
 	ZEND_ARG_INFO(0, string)
 ZEND_END_ARG_INFO()
@@ -64,15 +89,12 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_INFO_EX(arginfo_screwim_decrypt, 0, 0, 1)
 	ZEND_ARG_INFO(0, string)
 	ZEND_ARG_INFO(0, key)
-	ZEND_ARG_INFO(0, heder_len)
+	ZEND_ARG_INFO(0, header_len)
 ZEND_END_ARG_INFO()
-#if PHP_VERSION_ID > 79999
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_screwim_seed, 0, 0, IS_OBJECT, 0)
-#else
 ZEND_BEGIN_ARG_INFO_EX(arginfo_screwim_seed, 0, 0, 0)
-#endif
 ZEND_END_ARG_INFO()
-#endif
+#endif /* end of SCREWIM_DECRYPT */
+#endif /* end of PHP_VERSION_ID > 79999 */
 /* }}} */
 
 /* {{{ +-- screwim_functions[]
