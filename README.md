@@ -46,7 +46,7 @@ The normal purpose code and decryption logic included, can be customized by only
 
 ## License
 
-Copyright (c) 2016 JoungKyun.Kim
+Copyright (c) 2021 JoungKyun.Kim
 
 [BSD 2-clause](LICENSE)
 
@@ -182,7 +182,7 @@ The encription tool is located in ___mod_screwim/tools/___ .
 [root@host tools]$ make
 [root@host tools]$ make install # Or copy the screwim file into an appropriate directory.
 [root@host tools]$ /usr/bin/screwim -h
-screwim 1.0.2 : encode or decode php file
+screwim 1.0.3 : encode or decode php file
 Usage: screwim [OPTION] PHP_FILE
    -c VAL, --convert=VAL convert key byte to digits
    -d,     --decode   decrypt encrypted php script

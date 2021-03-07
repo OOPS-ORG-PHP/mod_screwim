@@ -1,5 +1,5 @@
 /*
- * Copuright (c) 2016 JoungKyun.Kim <http://oops.org>. All rights reserved.
+ * Copuright (c) 2021 JoungKyun.Kim <http://oops.org>. All rights reserved.
  *
  * This file is part of mod_screwim
  *
