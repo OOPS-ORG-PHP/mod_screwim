@@ -66,6 +66,12 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_screwim_decrypt, 0, 0, 1)
 	ZEND_ARG_INFO(0, key)
 	ZEND_ARG_INFO(0, heder_len)
 ZEND_END_ARG_INFO()
+#if PHP_VERSION_ID > 79999
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_screwim_seed, 0, 0, IS_OBJECT, 0)
+#else
+ZEND_BEGIN_ARG_INFO_EX(arginfo_screwim_seed, 0, 0, 0)
+#endif
+ZEND_END_ARG_INFO()
 #endif
 /* }}} */
 
@@ -77,7 +83,7 @@ const zend_function_entry screwim_functions[] = {
 	PHP_FE(screwim_encrypt, arginfo_screwim_encrypt)
 #ifdef SCREWIM_DECRYPT
 	PHP_FE(screwim_decrypt, arginfo_screwim_decrypt)
-	PHP_FE(screwim_seed, NULL)
+	PHP_FE(screwim_seed, arginfo_screwim_seed)
 #endif
 	{NULL, NULL, NULL}
 };
@@ -537,12 +543,7 @@ PHP_FUNCTION (screwim_seed) {
 	if ( tmp != NULL )
 		*tmp = 0;
 
-	if ( object_init (return_value) == FAILURE ) {
-		php_error(E_WARNING, "screwim_seed() failure object initialize");
-		efree (keybyte);
-		efree (keystr);
-		RETURN_NULL ();
-	}
+	object_init (return_value);
 
 	screwim_add_property_string (return_value, "keybyte", keybyte);
 	screwim_add_property_string (return_value, "keystr", keystr);

@@ -67,7 +67,7 @@ ZEND_END_MODULE_GLOBALS(screwim)
 # define SCREWIM_G(v) (screwim_globals.v)
 #endif
 
-// for <= PHP 5 {{{
+/* for <= PHP 5 {{{ */
 #if PHP_VERSION_ID < 60000
 	typedef struct _zend_string {
 		size_t   len;
@@ -84,7 +84,17 @@ ZEND_END_MODULE_GLOBALS(screwim)
 #else
 	#define RETVAL_SCREWDATA(z) RETVAL_STRINGL(z.buf, z.len)
 	#define screwim_add_property_string add_property_string
-#endif // }}}
+#endif /* }}} */
+
+/* for >= PHP8 {{{
+ *
+ * Since PHP 8, TSRMLS_DC, TSRMLS_CC, and TSRMLS_C constants have been removed.
+ */
+#if PHP_VERSION_ID > 79999
+	#define TSRMLS_DC
+	#define TSRMLS_CC
+	#define TSRMLS_C
+#endif /* }}} */
 
 #endif // }}} end of build PHP module
 
