@@ -465,6 +465,7 @@ PHP_FUNCTION (screwim_decrypt) {
 			zend_string_free (text);
 			zend_string_free (key);
 #endif
+			return;
 		}
 	}
 
