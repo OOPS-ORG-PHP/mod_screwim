@@ -9,7 +9,7 @@ PHP_ARG_ENABLE(screwim-decrypt, whether to enable ScrewIm decrypt api support,
 
 AC_DEFINE_UNQUOTED(SCREWIM_NAME, "ScrewIm", [Define to ScrewIm Name])
 AC_DEFINE_UNQUOTED(SCREWIM_STRING, "PHP Screw Improved", [Define to ScrewIm Full Name])
-AC_DEFINE_UNQUOTED(SCREWIM_VERSION, "1.0.3", [Define to ScrewIm version])
+AC_DEFINE_UNQUOTED(SCREWIM_VERSION, "1.0.4", [Define to ScrewIm version])
 
 dnl {{{ +-- function config_screwim_random ()
 function config_screwim_random () {
