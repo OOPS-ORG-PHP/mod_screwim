@@ -69,7 +69,7 @@ if test "$PHP_SCREWIM" != "no"; then
 	AC_DEFINE_UNQUOTED(SCREWIM_ENC_DATA, $SCREWIM_ENC_DATA, [Define to ScrewIm encrypt SEED key])
 	PHP_NEW_EXTENSION(screwim, php_screwim.c zencode.c, $ext_shared,, \\$(CFALGS))
 
-	if test "$PHP_SCREWIM_DECRYPT"; then
+	if test "$PHP_SCREWIM_DECRYPT" = "yes"; then
 		AC_DEFINE(SCREWIM_DECRYPT, 1, [define to support ScrewIm decrypt api ])
 	fi
 

@@ -27,7 +27,7 @@
 	</stability>
 	<license uri="https://raw.githubusercontent.com/OOPS-ORG-PHP/mod_screwim/master/LICENSE">BSD 2-Clause</license>
 	<notes>
-	-
+	- fixed #17 screwim_seed () works even without --enable-screwim-decrypt
 	</notes>
 	<contents>
 		<dir name="/">
@@ -41,6 +41,8 @@
 			<file md5sum="@zencode.c@" name="zencode.c" role="src" />
 			<dir name="tests">
 				<file md5sum="@tests/001.phpt@" name="001.phpt" role="test" />
+				<file md5sum="@tests/002.phpt@" name="002.phpt" role="test" />
+				<file md5sum="@tests/003.phpt@" name="003.phpt" role="test" />
 			</dir>
 			<dir name="tools">
 				<file md5sum="@tools/Makefile.am@" name="Makefile.am" role="src" />
@@ -71,7 +73,7 @@
 			<version><release>1.0.4</release><api>1.0.0</api></version>
 			<date>@curdate@</date>
 			<notes>
-			-
+			- fixed #17 screwim_seed () works even without --enable-screwim-decrypt
 			</notes>
 		</release>
 		<release>

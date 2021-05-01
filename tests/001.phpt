@@ -17,11 +17,13 @@ echo "I'm OK\n";
 EOL;
 
 $data = screwim_encrypt ($ctx);
-file_put_contents ('tests/001-sub.php', $data);
+$fp = fopen ('tests/001-sub.php', 'wb');
+fwrite ($fp, $data, strlen ($data));
+fclose ($fp);
 
 ini_set ('screwim.enable', true);
 require_once ('tests/001-sub.php');
-unlink ('tests/001-sub.php');
+#unlink ('tests/001-sub.php');
 
 ?>
 --EXPECT--
