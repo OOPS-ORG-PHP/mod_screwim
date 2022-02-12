@@ -1,6 +1,5 @@
 # Process this file with automake to produce Makefile.in
-# Copyright (c) 2016, JoungKyun.Kim <http://oops.org>
-# All rights reserved.
+# Copyright 2022. JoungKyun.Kim All rights reserved.
 #
 # This file is part of mod_screwim
 #

@@ -40,7 +40,7 @@ SEED 키를 변경 하여, 다른 사람이 빌드한 해독기(screwim.so)에�
 
 ## License
 
-Copyright (c) 2021 JoungKyun.Kim
+Copyright 2022. JoungKyun.Kim All rights reserved.
 
 [BSD 2-clause](LICENSE)
 

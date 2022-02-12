@@ -46,7 +46,7 @@ The normal purpose code and decryption logic included, can be customized by only
 
 ## License
 
-Copyright (c) 2021 JoungKyun.Kim
+Copyright 2022. JoungKyun.Kim All rights reserved.
 
 [BSD 2-clause](LICENSE)
 
