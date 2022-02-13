@@ -83,6 +83,16 @@ On configure, the ___--enable-screwim-decrypt___ option adds decrypt functions (
 
 If you are building ___for distribution___, never add the --enable-screwim-decrypt option!
 
+After the build, make sure to back up the values of the ```SCREWIM_ENC_DATA``` constant in the config.h file and the value the ```SCREWIM``` constant in the php_screwim.h file. If you forget the original source later, you can use this value to recover it.
+
+```bash
+[root@an3 mod_screwim]$ grep SCREWIM_ENC_DATA < config.h
+#define SCREWIM_ENC_DATA 26501, 21882, 15211, 24181, 15060, 13145
+[root@an3 mod_screwim]$ grep "define SCREWIM " < php_screwim.h
+#define SCREWIM     "\tSCREWIM DATA\t"
+```
+
+```SCREWIM_ENC_DATA``` values vary from time to time of build, so it is recommended to have a separate backup.
 
 ### 3. Test
 

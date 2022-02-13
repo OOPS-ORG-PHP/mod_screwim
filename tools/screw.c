@@ -62,14 +62,18 @@ short screwim_mycryptkey[] = {
 #ifdef HAVE_GETOPT_LONG
 static struct option long_options[] = { // {{{
 	/* Options without arguments: */
+#ifdef SUPPORT_DECODE
 	{ "decode", no_argument,       NULL, 'd' },
+#endif
 	{ "help",   no_argument,       NULL, 'h' },
 	{ "view",   no_argument,       NULL, 'v' },
 
 	/* Options accepting an argument: */
 	{ "convert", required_argument, NULL, 'c' },
+#ifdef SUPPORT_DECODE
 	{ "hlen",   required_argument, NULL, 'H' },
 	{ "key",    required_argument, NULL, 'k' },
+#endif
 	{ 0, 0, 0, 0 }
 }; // }}}
 #endif
@@ -81,17 +85,27 @@ void usage (void) {
 		"%s : encode or decode php file\n"
 		"Usage: %s [OPTION] PHP_FILE\n"
 		"   -c VAL, --convert=VAL convert key byte to digits\n"
+#ifdef SUPPORT_DECODE
 		"   -d,     --decode   decrypt encrypted php script\n"
+#endif
 		"   -h,     --help     this help messages\n"
+#ifdef SUPPORT_DECODE
 		"   -H VAL, --hlen=VAL length of magic key(SCREWIM_LEN or PM9SCREW_LEN).\n"
 		"                      use -d mode\n"
 		"   -k VAL, --key=VAL  key bytes. use with -d mode\n"
 		"   -v,     --view     print head length and key byte of this file\n",
+#endif
 		PACKAGE_STRING, PACKAGE_NAME
 	);
 	exit (1);
 }
 // }}}
+
+#ifdef SUPPORT_DECODE
+#define SHORT_OPTIONS "c:dhH:k:v"
+#else
+#define SHORT_OPTIONS "c:h"
+#endif
 
 // {{{ +-- int main (int argc, char ** argv)
 int main (int argc, char ** argv) {
@@ -110,9 +124,9 @@ int main (int argc, char ** argv) {
 	char   * key = NULL;
 
 #ifdef HAVE_GETOPT_LONG
-	while ( (opt = getopt_long (argc, (char *const *)argv, "c:dhH:k:v", long_options, (int *) 0)) != EOF )
+	while ( (opt = getopt_long (argc, (char *const *)argv, SHORT_OPTIONS, long_options, (int *) 0)) != EOF )
 #else
-	while ( (opt = getopt (argc, (char *const *)argv, "c:dhH:k:v")) != EOF )
+	while ( (opt = getopt (argc, (char *const *)argv, SHORT_OPTIONS)) != EOF )
 #endif
 	{
 		switch (opt) {
@@ -134,6 +148,7 @@ int main (int argc, char ** argv) {
 				printf ("\n");
 
 				return 0;
+#ifdef SUPPORT_DECODE
 			case 'd' :
 				mode++;
 				break;
@@ -162,6 +177,7 @@ int main (int argc, char ** argv) {
 				printf ("\n");
 
 				return 0;
+#endif
 			case 'h' :
 			default :
 				usage ();
@@ -171,10 +187,12 @@ int main (int argc, char ** argv) {
 	if ( (argc - optind) != 1 )
 		usage ();
 
+#ifdef SUPPORT_DECODE
 	if ( ! mode && (key != NULL || hlen != 0) ) {
 		fprintf (stderr, "Error: -H and -k options must be used with -d option\n\n");
 		usage ();
 	}
+#endif
 
 	fp = fopen (argv[optind], "r");
 	if ( fp == NULL ) {

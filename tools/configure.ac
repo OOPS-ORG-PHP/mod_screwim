@@ -13,6 +13,12 @@ AC_PREFIX_DEFAULT([/usr/local])
 
 AC_DEFUN([AC_DATAROOTDIR_CHECKED])
 
+AC_ARG_ENABLE(
+	[decode],
+	AC_HELP_STRING([--enable-decode], [enable decode option [Default: yes]])
+	[],[]
+)
+
 #AC_REQUIRE_AUX_FILE([tap-driver.sh])
 
 # Checks for programs.
@@ -30,6 +36,14 @@ AC_CHECK_LIB(z, deflate,, [AC_MSG_ERROR(z not found!)])
 AC_CHECK_FUNCS(getopt_long,, [AC_LIBOBJ(getopt) AC_LIBOBJ(getopt1)])
 
 AC_DEFINE(NO_PHP_MOD, 1, [No php module build])
+
+AC_MSG_CHECKING(checking for support decoding mode)
+if test "$enable_decode" != "no"; then
+	AC_DEFINE([SUPPORT_DECODE], [1], [support decode mode])
+	AC_MSG_RESULT([yes])
+else
+	AC_MSG_RESULT([no])
+fi
 
 AC_CONFIG_FILES([Makefile])
 

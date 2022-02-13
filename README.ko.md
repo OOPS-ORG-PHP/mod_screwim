@@ -78,6 +78,16 @@ configure 시에, ___--enable-screwim-decrypt___ 옵션을 주면, 복호화 기
 
 ___--enable-screwim-decrypt___ 옵션은 배포용으로 빌드를 할 경우에는 절대 추가하면 안됩니다!
 
+빌드 후, config.h 파일의 ```SCREWIM_ENC_DATA``` 상수의 값과 php_screwim.h의 ```SCREWIM``` 상수 값을 잘 백업 해 놓도록 합니다. 혹시 나중에 원본 소스를 잊어 버렸을 경우, 이 값을 알면 복구를 할 수 있습니다.
+
+```bash
+[root@an3 mod_screwim]$ grep SCREWIM_ENC_DATA < config.h
+#define SCREWIM_ENC_DATA 26501, 21882, 15211, 24181, 15060, 13145
+[root@an3 mod_screwim]$ grep "define SCREWIM " < php_screwim.h
+#define SCREWIM     "\tSCREWIM DATA\t"
+```
+
+```SCREWIM_ENC_DATA``` 값은 빌드 시 마다 달라지므로, 꼭 별도로 백업을 해 놓는 것을 권장 합니다.
 
 ### 3. 테스트
 
